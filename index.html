@@ -109,6 +109,11 @@
       cursor: not-allowed;
     }
 
+    /* Author display rules must not resurrect ending UI that uses the hidden attribute. */
+    [hidden] {
+      display: none !important;
+    }
+
     /* Top Bar */
     .top-bar {
       display: flex;
@@ -147,8 +152,32 @@
       font-weight: 600;
       color: var(--navy);
       background: var(--panel-alt);
-      min-width: 240px;
+      min-width: 0;
       max-width: 100%;
+    }
+
+    @media (max-width: 719px) {
+      .top-bar {
+        padding: 0.5rem 0.7rem;
+      }
+
+      .brand {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      #episodeSelect,
+      .top-actions {
+        flex: 1 1 100%;
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 720px) {
+      #episodeSelect {
+        min-width: 240px;
+      }
     }
 
     .top-actions {
@@ -181,7 +210,7 @@
     /* Main 2-Column Workspace */
     .workspace {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 1rem;
       padding: 1rem 1.1rem;
       flex: 1;
@@ -193,7 +222,7 @@
 
     @media (min-width: 960px) {
       .workspace {
-        grid-template-columns: 1.65fr 1fr;
+        grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
       }
     }
 
@@ -202,13 +231,17 @@
       display: flex;
       flex-direction: column;
       gap: 0.65rem;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .vn-stage {
       position: relative;
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      height: auto;
       aspect-ratio: 16 / 9;
-      min-height: 360px;
       border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--border-strong);
@@ -216,6 +249,13 @@
       box-shadow: var(--shadow-lg);
       display: flex;
       align-items: flex-end;
+    }
+
+    /* A 360px floor plus 16/9 transfers into ~640px of width. Keep that only on a wide desk. */
+    @media (min-width: 1100px) {
+      .vn-stage {
+        min-height: 360px;
+      }
     }
 
     #sceneImg {
@@ -265,6 +305,11 @@
       font-weight: 800;
       box-shadow: 0 2px 10px rgba(18, 58, 77, 0.1);
       backdrop-filter: blur(6px);
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .ending-type-badge {
@@ -316,10 +361,50 @@
       cursor: pointer;
     }
 
+    /*
+      On a phone, 16/9 of the full width is shorter than the dialogue overlay,
+      so the speaker line was clipped. Keep the picture 16/9 and stack the line under it.
+      These rules follow the base image/textbox styles so they win in the cascade.
+      The desk overlay stays cinematic.
+    */
+    @media (max-width: 959px) {
+      .vn-stage {
+        aspect-ratio: auto;
+        height: auto;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #sceneImg {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        flex: none;
+      }
+
+      .scene-fallback {
+        inset: auto;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+      }
+
+      .vn-textbox {
+        width: auto;
+        margin: 0.55rem;
+      }
+    }
+
     .vn-textbox-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
       gap: 0.5rem;
       margin-bottom: 0.35rem;
     }
@@ -374,6 +459,8 @@
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .card {
@@ -468,7 +555,7 @@
       font-weight: 900;
     }
 
-    .ending-summary-box {
+    .ending-summary-box:not([hidden]) {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -720,7 +807,7 @@
         <div class="scene-fallback" id="sceneFallback"></div>
 
         <div class="stage-top-bar">
-          <div class="scene-badge" id="sceneTitle">Episode 1: The Bubble Tea Disaster</div>
+          <div class="scene-badge" id="sceneTitle">Ep 1: Bubble Tea Disaster</div>
           <div class="ending-type-badge golden" id="endingBadge" hidden>GOLDEN S-RANK</div>
         </div>
 
@@ -2793,7 +2880,7 @@ function restartStory() {
   const select = document.getElementById("episodeSelect");
   currentEpisodeKey = select.value || "ep1_boba";
   currentEpisode = EPISODES[currentEpisodeKey];
-  document.getElementById("sceneTitle").textContent = currentEpisode.title;
+  document.getElementById("sceneTitle").textContent = currentEpisode.shortTitle || currentEpisode.title;
   document.getElementById("transcriptLog").textContent = "—";
   document.getElementById("textInput").value = "";
   document.getElementById("teacherTip").textContent = "Use the sentence frames and keywords above.";
