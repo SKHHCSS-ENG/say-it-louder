@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!--
+    SpeakNovel / Say It Louder — school shell (Task 1 Drive prototype)
+    Worker contract stub (Nest tip later; Ask/Explain core untouched):
+      POST WORKER_URL
+      Body JSON:
+        {
+          mode: "speaknovel",
+          episode: "ep1_boba",
+          nodeKey: "node_start",
+          transcript: "student speech text",
+          node: {
+            speaker, defaultLine, goalHint,
+            targetGrammar: { item, patterns[], keywords[] },
+            branches: [{ condition, targetNode, label }]
+          }
+        }
+      Response JSON:
+        {
+          chosen_target_node,
+          used_target_grammar: boolean,
+          grammar_score: 0-5,
+          character_reaction,
+          teacher_tip,
+          custom_anime_prompt
+        }
+      No Authorization header from the client. Key stays in Worker secret.
+      When used_target_grammar is false, do NOT route to a Golden/success ending.
+  -->
+  <title>Say It Louder · SpeakNovel</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --line: #334155;
+      --muted: #94a3b8;
+      --text: #f8fafc;
+      --accent: #f472b6;
+      --cyan: #38bdf8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --chip: #0b1220;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    button, input, select {
+      font: inherit;
+      color: inherit;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #090d16;
+      padding: 0.55rem 0.75rem;
+    }
+    button {
+      cursor: pointer;
+      font-weight: 700;
+      background: var(--cyan);
+      color: #090d16;
+      border: none;
+    }
+    button:hover { filter: brightness(1.08); }
+    button.ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid #475569;
+    }
+    button.danger { background: var(--danger); color: #fff; }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.65rem 0.85rem;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { font-weight: 800; letter-spacing: 0.01em; }
+    .brand small { display: block; font-weight: 600; color: var(--muted); font-size: 0.72rem; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--chip);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.28rem 0.7rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-left: auto;
+    }
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+      padding: 0.85rem;
+      flex: 1;
+      min-height: 0;
+    }
+    @media (min-width: 900px) {
+      .workspace { grid-template-columns: 1.7fr 1fr; }
+    }
+
+    .vn-stage {
+      position: relative;
+      min-height: min(58vh, 520px);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 2px solid #475569;
+      background: #000;
+      display: flex;
+      align-items: flex-end;
+    }
+    #sceneImg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; background: #111827;
+    }
+    .scene-fallback {
+      position: absolute; inset: 0;
+      display: none; align-items: center; justify-content: center;
+      padding: 1.2rem; text-align: center; color: var(--muted);
+      background: linear-gradient(160deg, #1e293b, #0f172a 55%, #312e81);
+      font-size: 0.95rem; line-height: 1.45;
+      flex-direction: column; gap: 0.55rem;
+    }
+    .scene-fallback.show { display: flex; }
+    .scene-fallback .plate-msg { font-size: 0.92rem; font-weight: 700; color: #e2e8f0; max-width: 22rem; }
+    .scene-fallback details.prompt-details {
+      max-width: min(92%, 26rem); text-align: left;
+      background: rgba(15,23,42,0.72); border: 1px solid var(--line);
+      border-radius: 8px; padding: 0.35rem 0.55rem; font-size: 0.72rem;
+    }
+    .scene-fallback details.prompt-details summary {
+      cursor: pointer; color: var(--cyan); font-weight: 700; list-style: none;
+    }
+    .scene-fallback details.prompt-details summary::-webkit-details-marker { display: none; }
+    .scene-fallback details.prompt-details[open] summary { margin-bottom: 0.35rem; }
+    .scene-fallback .prompt-body {
+      color: #94a3b8; white-space: pre-wrap; word-break: break-word; line-height: 1.35;
+      max-height: 7rem; overflow: auto;
+    }
+    #teacherToggleBtn { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+    #teacherToggleBtn.teacher-armed { border-color: var(--ok); color: var(--ok); }
+    .scene-badge {
+      position: absolute; top: 0.7rem; left: 0.7rem; z-index: 2;
+      background: rgba(15,23,42,0.88); padding: 0.45rem 0.75rem;
+      border-radius: 8px; border: 1px solid var(--cyan);
+      font-size: 0.78rem; font-weight: 700; max-width: calc(100% - 1.4rem);
+    }
+    .vn-textbox {
+      position: relative; z-index: 2; width: calc(100% - 1.2rem);
+      margin: 0 auto 0.75rem; background: rgba(15,23,42,0.93);
+      border: 2px solid var(--accent); border-radius: 12px;
+      padding: 0.85rem 1rem; box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+    }
+    .vn-speaker {
+      display: inline-block; background: var(--accent); color: #090d16;
+      font-weight: 800; font-size: 0.72rem; padding: 0.22rem 0.6rem;
+      border-radius: 6px; text-transform: uppercase; margin-bottom: 0.4rem;
+    }
+    .vn-dialogue { font-size: 1.05rem; line-height: 1.45; min-height: 2.8rem; }
+    .vn-situation {
+      font-size: 0.82rem; color: #cbd5e1; margin-top: 0.55rem;
+      border-top: 1px solid var(--line); padding-top: 0.5rem;
+    }
+
+    .sidebar { display: flex; flex-direction: column; gap: 0.75rem; }
+    .card {
+      background: var(--panel); padding: 0.85rem;
+      border-radius: 10px; border: 1px solid var(--line);
+    }
+    .card h3 {
+      margin: 0 0 0.45rem; font-size: 0.88rem; letter-spacing: 0.02em;
+    }
+    .grammar-card {
+      border-color: #7c3aed;
+      background: linear-gradient(180deg, rgba(124,58,237,0.18), rgba(30,41,59,0.95));
+    }
+    .grammar-item { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.45rem; }
+    .grammar-patterns { margin: 0; padding-left: 1.1rem; color: #e2e8f0; font-size: 0.84rem; line-height: 1.4; }
+    .grammar-patterns li { margin-bottom: 0.25rem; }
+    .keyword-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.55rem; }
+    .kw {
+      background: #0b1220; border: 1px solid #7c3aed; color: #ddd6fe;
+      border-radius: 999px; padding: 0.18rem 0.55rem; font-size: 0.72rem; font-weight: 700;
+    }
+    .ending-note { color: var(--ok); font-size: 0.85rem; font-weight: 700; }
+
+    .mic-btn { width: 100%; padding: 0.85rem; font-size: 0.95rem; background: var(--danger); color: #fff; }
+    .mic-btn.listening { background: var(--ok); color: #052e16; }
+    .row { display: flex; gap: 0.45rem; margin-top: 0.5rem; }
+    .row input { flex: 1; min-width: 0; }
+    .you-said { font-size: 0.78rem; color: var(--muted); margin-top: 0.55rem; }
+    .you-said strong { color: #fff; }
+    .tip-box {
+      background: rgba(56,189,248,0.12); border-left: 4px solid var(--cyan);
+      padding: 0.65rem 0.75rem; border-radius: 4px; font-size: 0.84rem; line-height: 1.4;
+    }
+    .score-pill {
+      display: inline-block; margin-left: 0.35rem; padding: 0.1rem 0.45rem;
+      border-radius: 999px; background: #0b1220; border: 1px solid var(--cyan);
+      font-size: 0.72rem; font-weight: 800; color: var(--cyan);
+    }
+    .branch-preview { font-size: 0.78rem; color: var(--muted); line-height: 1.45; }
+    .branch-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
+      background: #090d16; padding: 0.45rem 0.55rem; border-radius: 6px; margin-bottom: 0.4rem;
+    }
+    .branch-row span { color: #e2e8f0; }
+    .branch-row button { font-size: 0.7rem; padding: 0.25rem 0.5rem; }
+    .teacher-panel { display: none; }
+    .teacher-panel.open { display: block; }
+    .teacher-grid { display: grid; gap: 0.45rem; }
+    .teacher-grid label {
+      display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; color: #cbd5e1;
+    }
+    .mode-note { font-size: 0.72rem; color: var(--muted); margin-top: 0.35rem; }
+    .endings-list { font-size: 0.78rem; color: #cbd5e1; margin-top: 0.35rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="brand">Say It Louder <small>SpeakNovel · school shell</small></div>
+    <select id="episodeSelect" aria-label="Episode" onchange="restartStory()"></select>
+    <button type="button" class="ghost" onclick="restartStory()">Restart</button>
+    <button type="button" class="ghost" id="teacherToggleBtn" title="Hold 1.2s or enter code"
+            aria-label="Teacher (hold or enter code)">Teacher</button>
+    <span class="chip" id="endingsChip" title="Endings unlocked this episode">0/5 endings</span>
+    <span class="chip" id="nodeIndicator">node_start</span>
+  </header>
+
+  <main class="workspace">
+    <section class="vn-stage" aria-label="Story stage">
+      <img id="sceneImg" alt="" />
+      <div class="scene-fallback" id="sceneFallback">Scene plate loading…</div>
+      <div class="scene-badge" id="sceneTitle">Episode 1: The Bubble Tea Spill</div>
+      <div class="vn-textbox">
+        <div class="vn-speaker" id="speakerName">Angry Customer (Ken)</div>
+        <div class="vn-dialogue" id="dialogueText">"Hey!! Look what you just did!"</div>
+        <div class="vn-situation" id="situationPrompt">Goal: apologise and offer a clear fix.</div>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="card grammar-card" id="grammarCard">
+        <h3>Grammar mission</h3>
+        <div class="grammar-item" id="grammarItem">—</div>
+        <ul class="grammar-patterns" id="grammarPatterns"></ul>
+        <div class="keyword-row" id="grammarKeywords"></div>
+        <div class="ending-note" id="grammarEndingNote" hidden>Ending — no new grammar target.</div>
+      </div>
+
+      <div class="card">
+        <h3>Your line</h3>
+        <button type="button" id="micBtn" class="mic-btn" onclick="toggleMic()">Speak</button>
+        <div class="row">
+          <input type="text" id="textInput" placeholder="Or type your line…" autocomplete="off"
+                 onkeydown="if(event.key==='Enter')submitText()" />
+          <button type="button" onclick="submitText()">Say it</button>
+        </div>
+        <div class="you-said"><strong>You said:</strong> <span id="transcriptLog">…</span></div>
+        <div class="mode-note" id="routerModeNote">Router: mock (no Worker URL)</div>
+      </div>
+
+      <div class="card">
+        <h3>Coach tip</h3>
+        <div class="tip-box" id="teacherTip">Use the grammar mission patterns above.</div>
+      </div>
+
+      <div class="card teacher-panel" id="teacherPanel">
+        <h3>Teacher panel</h3>
+        <div class="teacher-grid">
+          <label><input type="checkbox" id="showBranches" checked onchange="renderBranches()" /> Show branch map + Test</label>
+          <label><input type="checkbox" id="usePollinations" onchange="refreshSceneImage()" /> Use Pollinations for missing plates</label>
+          <label><input type="checkbox" id="useTypewriter" /> Light typewriter</label>
+          <label>Optional DeepSeek key (Drive preview only)
+            <input type="password" id="apiKey" placeholder="Teacher-only · not for students" style="width:100%; margin-top:0.25rem;" autocomplete="off" />
+          </label>
+        </div>
+        <div id="branchList" class="branch-preview" style="margin-top:0.65rem;"></div>
+        <div class="endings-list" id="endingsList"></div>
+      </div>
+    </aside>
+  </main>
+
+<script>
+/* ============================================================================
+   CONFIG — Nest tips WORKER_URL later for live add-on route.
+   Empty WORKER_URL → mock keyword router (Drive preview works offline).
+   ============================================================================ */
+const WORKER_URL = ""; // e.g. "https://deepseek-explain.skhhcss-eng.workers.dev"
+const USE_WORKER = !!(WORKER_URL && String(WORKER_URL).trim());
+const LS_EPISODE = "speaknovel.school.lastEpisode";
+const LS_ENDINGS = "speaknovel.school.endings."; // + episode key
+
+/* ============================================================================
+   PART 1: STORYBOARD CARTRIDGES
+   ============================================================================ */
+const EPISODES = {
+  ep1_boba: {
+    title: "Episode 1: The Bubble Tea Spill",
+    startNode: "node_start",
+    nodes: {
+      node_start: {
+        speaker: "Angry Customer (Ken)",
+        defaultLine: "Hey!! The lid popped off! My brand-new white hoodie is covered in purple taro milk tea! What are you going to do about this?!",
+        goalHint: "Goal: apologise politely AND offer a concrete fix (napkins, remake, refund).",
+        plate: "plates/ep1-node_start.webp",
+        animePrompt: "anime visual novel style, angry young man in a Hong Kong bubble tea shop pointing at purple spilled milk tea stain on his white hoodie, dramatic expression, high quality",
+        targetGrammar: {
+          item: "Polite Modals & Offers ('Would you mind if…', 'Allow me to…')",
+          patterns: [
+            "I am terribly sorry! Allow me to ___ right away.",
+            "Would you mind waiting a moment while I ___?"
+          ],
+          keywords: ["allow me", "let me", "would you mind", "could i", "right away", "terribly sorry", "i'm sorry", "i am sorry"]
+        },
+        branches: [
+          {
+            condition: "Student apologises politely AND offers a clear, helpful solution (free remake, refund, napkins, or cleaning).",
+            targetNode: "node_remake",
+            label: "Polite & helpful offer",
+            kind: "success"
+          },
+          {
+            condition: "Student gives a lazy/vague apology ('sorry', 'oops') without explaining how they will help.",
+            targetNode: "node_manager",
+            label: "Vague / unhelpful apology",
+            kind: "retry"
+          },
+          {
+            condition: "Student is rude, blames the customer, or refuses to help.",
+            targetNode: "ending_viral_fail",
+            label: "Rude / blaming (fail)",
+            kind: "fail"
+          },
+          {
+            condition: "Student says something hilarious, absurd, or overly dramatic (e.g. claiming the purple stain is high fashion).",
+            targetNode: "ending_meme_fashion",
+            label: "Silly / creative (meme)",
+            kind: "meme"
+          }
+        ]
+      },
+
+      node_remake: {
+        speaker: "Calmer Customer (Ken)",
+        defaultLine: "Sigh… okay, thank you for the napkins. Since I'm late for work, please remake my Taro Milk Tea quickly—but make it HALF sugar and LESS ice!",
+        goalHint: "Goal: repeat the exact custom order clearly (half sugar + less ice).",
+        plate: "plates/ep1-node_remake.webp",
+        animePrompt: "anime visual novel style, young man in bubble tea shop wiping hoodie with napkin looking calmer, warm cafe lighting",
+        targetGrammar: {
+          item: "Quantity & Custom Orders (half / less / no)",
+          patterns: [
+            "One taro milk tea, half sugar and less ice, please.",
+            "Could you make it with half sugar and less ice?"
+          ],
+          keywords: ["half sugar", "50%", "less ice", "little ice", "taro", "milk tea"]
+        },
+        branches: [
+          {
+            condition: "Student clearly instructs the kitchen to make a Taro Milk Tea with BOTH half sugar and less ice.",
+            targetNode: "ending_golden",
+            label: "Accurate custom order (golden)",
+            kind: "golden"
+          },
+          {
+            condition: "Student forgets half sugar or less ice, or mixes up the ingredients.",
+            targetNode: "ending_brainfreeze",
+            label: "Messed-up order (funny fail)",
+            kind: "fail"
+          }
+        ]
+      },
+
+      node_manager: {
+        speaker: "Furious Customer (Ken)",
+        defaultLine: "Just 'sorry'?! That's it?! My hoodie is ruined! Give me one good reason why I shouldn't call your manager right now!",
+        goalHint: "Last chance: use polite modals ('Would you allow me to…', 'Allow me to…') and a generous offer.",
+        plate: "plates/ep1-node_manager.webp",
+        animePrompt: "anime visual novel style, furious anime guy crossing arms in cafe, dark dramatic background sparks",
+        targetGrammar: {
+          item: "Polite Modals & Offers (last chance)",
+          patterns: [
+            "Would you allow me to remake your drink and give you a full refund?",
+            "Allow me to sort this out right away — a free drink and napkins."
+          ],
+          keywords: ["would you", "allow me", "let me", "could i", "refund", "free drink", "right away"]
+        },
+        branches: [
+          {
+            condition: "Student uses very polite English and offers a generous solution (refund + free drinks).",
+            targetNode: "node_remake",
+            label: "Saved it! (back to remake)",
+            kind: "success"
+          },
+          {
+            condition: "Student still speaks vaguely, rudely, or gives up.",
+            targetNode: "ending_fired",
+            label: "Fired by manager (bad)",
+            kind: "fail"
+          }
+        ]
+      },
+
+      ending_golden: {
+        isEnding: true,
+        endingId: "golden",
+        speaker: "GOLDEN ENDING: 5-Star Service!",
+        defaultLine: "Wow, this remade drink is perfection! Thank you for handling that so professionally — here is a tip for the trouble!",
+        goalHint: "Episode cleared! Restart to find other endings.",
+        plate: "plates/ep1-ending_golden.webp",
+        animePrompt: "anime visual novel style, happy smiling young man holding bubble tea giving a thumbs up, sparkles and cherry blossoms"
+      },
+      ending_viral_fail: {
+        isEnding: true,
+        endingId: "viral_fail",
+        speaker: "BAD ENDING: Cancelled on Social Media!",
+        defaultLine: "Unbelievable! I'm livestreaming this right now! 'Rudest Bubble Tea Staff in Hong Kong' is already trending!",
+        goalHint: "Failed. Try softer, more helpful language next time.",
+        plate: "plates/ep1-ending_viral_fail.webp",
+        animePrompt: "anime visual novel style, angry man holding smartphone filming the viewer in a cafe, shocked background characters, comic style"
+      },
+      ending_meme_fashion: {
+        isEnding: true,
+        endingId: "meme_fashion",
+        speaker: "SECRET MEME ENDING: Accidental Fashion Icon!",
+        defaultLine: "Wait… you really think this purple splash looks like limited-edition streetwear?! A fashion scout just offered to buy my stained hoodie!",
+        goalHint: "Secret ending unlocked! Creativity wins.",
+        plate: "plates/ep1-ending_meme_fashion.webp",
+        animePrompt: "anime visual novel style, cool guy posing like a supermodel in a purple-stained white hoodie with paparazzi cameras flashing"
+      },
+      ending_brainfreeze: {
+        isEnding: true,
+        endingId: "brainfreeze",
+        speaker: "CHAOS ENDING: Ice Mountain!",
+        defaultLine: "Brrr!! You didn't tell the kitchen 'less ice', so they gave me a cup that is mostly ice cubes and far too much sugar!",
+        goalHint: "So close! Include half sugar AND less ice.",
+        plate: "plates/ep1-ending_brainfreeze.webp",
+        animePrompt: "anime visual novel style, comical anime character shivering covered in frost holding a giant cup of ice cubes"
+      },
+      ending_fired: {
+        isEnding: true,
+        endingId: "fired",
+        speaker: "BAD ENDING: Promoted to Customer!",
+        defaultLine: "The manager walked out, heard your weak excuse, and took your apron away on the spot!",
+        goalHint: "Game over. Restart to try again.",
+        plate: "plates/ep1-ending_fired.webp",
+        animePrompt: "anime visual novel style, strict cafe manager pointing towards the exit door while holding a green apron, dramatic rain outside"
+      }
+    }
+  }
+  /* ep2–ep4 keys land here after Tess Docs */
+};
+
+/* ============================================================================
+   PART 2: ENGINE
+   ============================================================================ */
+let currentEpisodeKey = "ep1_boba";
+let currentEpisode = null;
+let currentNodeKey = "node_start";
+let recognition = null;
+let typewriterTimer = null;
+let micListenTimer = null;
+let teacherUnlocked = false;
+let teacherHoldTimer = null;
+const TEACHER_CODE = "SIL";
+const MIC_LISTEN_MS = 8000;
+const TEACHER_HOLD_MS = 1200;
+
+function episodeEndingCount(ep) {
+  return Object.values(ep.nodes).filter(n => n.isEnding).length;
+}
+
+function loadUnlocked(epKey) {
+  try {
+    const raw = localStorage.getItem(LS_ENDINGS + epKey);
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch (_) {
+    return new Set();
+  }
+}
+
+function saveUnlocked(epKey, set) {
+  try {
+    localStorage.setItem(LS_ENDINGS + epKey, JSON.stringify([...set]));
+  } catch (_) { /* ignore quota */ }
+}
+
+function updateEndingsChip() {
+  const total = episodeEndingCount(currentEpisode);
+  const unlocked = loadUnlocked(currentEpisodeKey);
+  document.getElementById("endingsChip").textContent = `${unlocked.size}/${total} endings`;
+  const list = document.getElementById("endingsList");
+  if (!list) return;
+  const ids = Object.values(currentEpisode.nodes)
+    .filter(n => n.isEnding)
+    .map(n => n.endingId || n.speaker);
+  list.innerHTML = "<strong>Unlocked:</strong> " +
+    (unlocked.size ? [...unlocked].join(", ") : "none yet") +
+    "<br><strong>All:</strong> " + ids.join(", ");
+}
+
+function markEndingIfNeeded(node) {
+  if (!node || !node.isEnding) return;
+  const id = node.endingId || currentNodeKey;
+  const unlocked = loadUnlocked(currentEpisodeKey);
+  unlocked.add(id);
+  saveUnlocked(currentEpisodeKey, unlocked);
+  updateEndingsChip();
+}
+
+function initVN() {
+  const select = document.getElementById("episodeSelect");
+  Object.keys(EPISODES).forEach(k => {
+    const opt = document.createElement("option");
+    opt.value = k;
+    opt.textContent = EPISODES[k].title;
+    select.appendChild(opt);
+  });
+  try {
+    const last = localStorage.getItem(LS_EPISODE);
+    if (last && EPISODES[last]) select.value = last;
+  } catch (_) {}
+  setupVoice();
+  setupTeacherGate();
+  updateRouterModeNote();
+  restartStory();
+}
+
+function updateRouterModeNote() {
+  const el = document.getElementById("routerModeNote");
+  if (!el) return;
+  if (USE_WORKER) {
+    el.textContent = "Router: Worker proxy (no student key)";
+  } else {
+    el.textContent = "Router: mock · optional teacher DeepSeek key in Teacher panel";
+  }
+}
+
+function setTeacherPanelOpen(open) {
+  const panel = document.getElementById("teacherPanel");
+  const btn = document.getElementById("teacherToggleBtn");
+  if (open) {
+    panel.classList.add("open");
+    btn.textContent = "Hide teacher";
+    btn.classList.add("teacher-armed");
+  } else {
+    panel.classList.remove("open");
+    btn.textContent = "Teacher";
+    /* keep armed style once unlocked so staff see it is gated-openable */
+    if (teacherUnlocked) btn.classList.add("teacher-armed");
+    else btn.classList.remove("teacher-armed");
+  }
+  renderBranches();
+}
+
+function unlockTeacherPanel() {
+  teacherUnlocked = true;
+  setTeacherPanelOpen(true);
+}
+
+function requestTeacherAccess() {
+  if (teacherUnlocked) {
+    const panel = document.getElementById("teacherPanel");
+    setTeacherPanelOpen(!panel.classList.contains("open"));
+    return;
+  }
+  const code = window.prompt("Teacher code (or hold the Teacher button for 1.2s):", "");
+  if (code == null) return;
+  if (String(code).trim().toUpperCase() === TEACHER_CODE) {
+    unlockTeacherPanel();
+  } else if (String(code).trim()) {
+    window.alert("Wrong code.");
+  }
+}
+
+function setupTeacherGate() {
+  const btn = document.getElementById("teacherToggleBtn");
+  if (!btn || btn.dataset.gateReady === "1") return;
+  btn.dataset.gateReady = "1";
+  let holdArmed = false; /* true while a long-press countdown is running */
+
+  const clearHold = () => {
+    if (teacherHoldTimer) {
+      clearTimeout(teacherHoldTimer);
+      teacherHoldTimer = null;
+    }
+    holdArmed = false;
+  };
+
+  const startHold = (ev) => {
+    if (ev.type === "mousedown" && ev.button !== 0) return;
+    if (teacherUnlocked) return; /* unlocked: click alone toggles */
+    clearHold();
+    holdArmed = true;
+    teacherHoldTimer = setTimeout(() => {
+      teacherHoldTimer = null;
+      holdArmed = false;
+      btn.dataset.justHeld = "1"; /* swallow the mouseup/click that ends the hold */
+      unlockTeacherPanel();
+      setTimeout(() => { btn.dataset.justHeld = "0"; }, 500);
+    }, TEACHER_HOLD_MS);
+  };
+
+  btn.addEventListener("click", (ev) => {
+    if (btn.dataset.justHeld === "1") {
+      btn.dataset.justHeld = "0";
+      ev.preventDefault();
+      return;
+    }
+    requestTeacherAccess();
+  });
+
+  btn.addEventListener("mousedown", startHold);
+  btn.addEventListener("touchstart", startHold, { passive: true });
+  const cancelHold = () => {
+    if (holdArmed) clearHold();
+  };
+  ["mouseup", "mouseleave", "touchend", "touchcancel"].forEach(evt => {
+    btn.addEventListener(evt, cancelHold);
+  });
+}
+
+function toggleTeacherPanel() {
+  /* kept for any leftover calls; gated */
+  requestTeacherAccess();
+}
+
+function restartStory() {
+  const epKey = document.getElementById("episodeSelect").value;
+  currentEpisodeKey = epKey;
+  currentEpisode = EPISODES[epKey];
+  try { localStorage.setItem(LS_EPISODE, epKey); } catch (_) {}
+  document.getElementById("sceneTitle").textContent = currentEpisode.title;
+  document.getElementById("teacherTip").textContent = "Use the grammar mission patterns above.";
+  updateEndingsChip();
+  goToNode(currentEpisode.startNode);
+}
+
+function renderGrammarCard(node) {
+  const itemEl = document.getElementById("grammarItem");
+  const patEl = document.getElementById("grammarPatterns");
+  const kwEl = document.getElementById("grammarKeywords");
+  const endNote = document.getElementById("grammarEndingNote");
+  if (node.isEnding || !node.targetGrammar) {
+    itemEl.textContent = "—";
+    patEl.innerHTML = "";
+    kwEl.innerHTML = "";
+    endNote.hidden = false;
+    return;
+  }
+  endNote.hidden = true;
+  const tg = node.targetGrammar;
+  itemEl.textContent = tg.item || "Grammar target";
+  patEl.innerHTML = (tg.patterns || []).slice(0, 2).map(p => `<li>${escapeHtml(p)}</li>`).join("");
+  kwEl.innerHTML = (tg.keywords || []).slice(0, 8).map(k =>
+    `<span class="kw">${escapeHtml(k)}</span>`
+  ).join("");
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function setDialogue(text) {
+  const el = document.getElementById("dialogueText");
+  const full = `"${text}"`;
+  if (typewriterTimer) {
+    clearInterval(typewriterTimer);
+    typewriterTimer = null;
+  }
+  const useTw = document.getElementById("useTypewriter")?.checked;
+  if (!useTw) {
+    el.textContent = full;
+    return;
+  }
+  el.textContent = "";
+  let i = 0;
+  typewriterTimer = setInterval(() => {
+    i += 1;
+    el.textContent = full.slice(0, i);
+    if (i >= full.length) {
+      clearInterval(typewriterTimer);
+      typewriterTimer = null;
+    }
+  }, 12);
+}
+
+function showPlateFallback(shortMsg, promptText) {
+  const img = document.getElementById("sceneImg");
+  const fallback = document.getElementById("sceneFallback");
+  img.removeAttribute("src");
+  const prompt = String(promptText || "").trim();
+  let htmlOut = `<div class="plate-msg">${escapeHtml(shortMsg)}</div>`;
+  if (prompt) {
+    htmlOut += `<details class="prompt-details"><summary>Prompt</summary>` +
+      `<div class="prompt-body">${escapeHtml(prompt)}</div></details>`;
+  }
+  fallback.innerHTML = htmlOut;
+  fallback.classList.add("show");
+}
+
+function refreshSceneImage(customImagePrompt) {
+  const node = currentEpisode.nodes[currentNodeKey];
+  const img = document.getElementById("sceneImg");
+  const fallback = document.getElementById("sceneFallback");
+  const local = node.plate || node.still || "";
+  const usePoll = document.getElementById("usePollinations")?.checked;
+  const prompt = customImagePrompt || node.animePrompt || "";
+
+  img.onload = () => {
+    fallback.classList.remove("show");
+    fallback.innerHTML = "";
+  };
+  img.onerror = () => {
+    if (usePoll) {
+      const promptText = encodeURIComponent(prompt || "anime visual novel cafe");
+      img.onerror = () => showPlateFallback(
+        "Plate pending (Muse): " + (local || "—"),
+        prompt
+      );
+      img.src = `https://image.pollinations.ai/prompt/${promptText}?width=1024&height=576&nologo=true`;
+    } else {
+      showPlateFallback("Plate pending (Muse): " + (local || "no path yet"), prompt);
+    }
+  };
+
+  if (local) {
+    fallback.classList.remove("show");
+    fallback.innerHTML = "";
+    img.src = local;
+  } else if (usePoll) {
+    img.onerror();
+  } else {
+    showPlateFallback("Plate pending · Muse stills will fill this node.", prompt);
+  }
+}
+
+function goToNode(nodeKey, customAiLine = null, customImagePrompt = null) {
+  currentNodeKey = nodeKey;
+  const node = currentEpisode.nodes[nodeKey];
+  if (!node) return;
+  document.getElementById("nodeIndicator").textContent = nodeKey;
+  document.getElementById("speakerName").textContent = node.speaker;
+  setDialogue(customAiLine || node.defaultLine);
+  document.getElementById("situationPrompt").textContent = node.goalHint || "";
+  renderGrammarCard(node);
+  refreshSceneImage(customImagePrompt);
+  markEndingIfNeeded(node);
+
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(customAiLine || node.defaultLine));
+  }
+  renderBranches();
+}
+
+function renderBranches() {
+  const branchBox = document.getElementById("branchList");
+  const show = document.getElementById("showBranches")?.checked &&
+    document.getElementById("teacherPanel").classList.contains("open");
+  if (!show) {
+    branchBox.innerHTML = "";
+    return;
+  }
+  const node = currentEpisode.nodes[currentNodeKey];
+  if (node.isEnding) {
+    branchBox.innerHTML = `<strong style="color:var(--ok);">End of branch</strong>`;
+    return;
+  }
+  branchBox.innerHTML = (node.branches || []).map(b =>
+    `<div class="branch-row">
+      <span>${escapeHtml(b.label)}</span>
+      <button type="button" onclick="goToNode('${b.targetNode}')">Test</button>
+    </div>`
+  ).join("");
+}
+
+function isGoldenOrSuccessTarget(targetNode) {
+  const n = currentEpisode.nodes[targetNode];
+  if (!n) return false;
+  if (n.endingId === "golden") return true;
+  const branch = (currentEpisode.nodes[currentNodeKey].branches || [])
+    .find(b => b.targetNode === targetNode);
+  return !!(branch && (branch.kind === "golden" || branch.kind === "success"));
+}
+
+function preferNonGolden(node, chosen) {
+  if (!isGoldenOrSuccessTarget(chosen)) return chosen;
+  const fallback = (node.branches || []).find(b =>
+    b.kind === "retry" || b.kind === "fail" || b.targetNode === "node_manager" ||
+    String(b.targetNode).includes("brainfreeze") || String(b.targetNode).includes("fired")
+  );
+  return fallback ? fallback.targetNode : chosen;
+}
+
+/* --- Mock router (Drive preview, no Worker) --- */
+function mockRoute(transcript, node) {
+  const t = String(transcript || "").toLowerCase();
+  const tg = node.targetGrammar || { keywords: [] };
+  const kwHits = (tg.keywords || []).filter(k => t.includes(String(k).toLowerCase())).length;
+  const usedGrammar = kwHits >= 1;
+  const grammarScore = Math.min(5, kwHits + (usedGrammar ? 1 : 0) +
+    (/please|thank|sorry|apologis|apologiz/.test(t) ? 1 : 0));
+
+  const rude = /\b(your fault|not my problem|shut up|stupid|whatever|so what)\b/.test(t);
+  const meme = /\b(fashion|streetwear|art|drip|cool stain|looks good|designed)\b/.test(t);
+  const vagueOnly = /^(um+|uh+|sorry|oops|my bad)\.?$/i.test(transcript.trim()) ||
+    (/\bsorry\b|\boops\b|\bmy bad\b/.test(t) && !usedGrammar && !/\b(let me|allow me|refund|napkin|remake|replace|free)\b/.test(t));
+
+  let chosen = node.branches[0]?.targetNode;
+  let reaction = "Hmm… okay.";
+  let tip = "Try the grammar mission patterns on the card.";
+
+  if (currentNodeKey === "node_start") {
+    if (rude) {
+      chosen = "ending_viral_fail";
+      reaction = "Unbelievable! I'm filming this right now!";
+      tip = "Avoid blame. Soften with an apology + offer.";
+    } else if (meme && !usedGrammar) {
+      chosen = "ending_meme_fashion";
+      reaction = "Wait… fashion? You might be onto something…";
+      tip = "Funny ending! For the golden path, still use the target modals.";
+    } else if (usedGrammar && /\b(napkin|remake|replace|refund|free|clean|wipe|drink)\b/.test(t)) {
+      chosen = "node_remake";
+      reaction = "Alright… thank you. That helps.";
+      tip = `Nice modal/offer language. Grammar score ${grammarScore}/5.`;
+    } else if (vagueOnly || (!usedGrammar && /\bsorry\b/.test(t))) {
+      chosen = "node_manager";
+      reaction = "Just 'sorry'?! That's not enough!";
+      tip = "Apology alone is weak — add Allow me to… / Would you mind… + a concrete fix.";
+    } else if (usedGrammar) {
+      chosen = "node_remake";
+      reaction = "Okay… I appreciate you trying to fix this.";
+      tip = `Target grammar heard. Score ${grammarScore}/5 — add a clearer fix next time.`;
+    } else {
+      chosen = "node_manager";
+      reaction = "That didn't help. Should I call your manager?";
+      tip = "Use the mission keywords: allow me / would you mind / let me + a real offer.";
+    }
+  } else if (currentNodeKey === "node_remake") {
+    const half = /\bhalf sugar\b|\b50%\b|\bhalf[ -]?sugar\b/.test(t);
+    const lessIce = /\bless ice\b|\blittle ice\b|\bnot too much ice\b/.test(t);
+    const taro = /\btaro\b/.test(t) || /\bmilk tea\b/.test(t);
+    if (half && lessIce) {
+      chosen = "ending_golden";
+      reaction = "Perfect — half sugar, less ice. Thank you!";
+      tip = `Clear custom order. Grammar score ${Math.max(grammarScore, 4)}/5.`;
+    } else {
+      chosen = "ending_brainfreeze";
+      reaction = "Wait — this order feels wrong…";
+      tip = "Say both: half sugar AND less ice (and taro milk tea).";
+    }
+    // Grammar gate for golden
+    if (chosen === "ending_golden" && !usedGrammar && !(half && lessIce)) {
+      chosen = "ending_brainfreeze";
+    }
+  } else if (currentNodeKey === "node_manager") {
+    if (usedGrammar && /\b(refund|free|remake|napkin|replace|drink)\b/.test(t)) {
+      chosen = "node_remake";
+      reaction = "Fine. One more chance — remake it properly.";
+      tip = `Polite modal saved you. Score ${grammarScore}/5.`;
+    } else if (rude) {
+      chosen = "ending_fired";
+      reaction = "Manager! Get this person out of here!";
+      tip = "Stay polite under pressure.";
+    } else {
+      chosen = "ending_fired";
+      reaction = "That's it. I'm calling the manager.";
+      tip = "Last chance needed Would you… / Allow me to… plus a generous offer.";
+    }
+  }
+
+  // Hard gate: never golden/success if used_target_grammar is false
+  let used = usedGrammar;
+  if (currentNodeKey === "node_remake") {
+    used = /\bhalf sugar\b|\bless ice\b|\bcould you\b|\bplease\b/.test(t);
+  }
+  if (!used) {
+    chosen = preferNonGolden(node, chosen);
+  }
+
+  return {
+    chosen_target_node: chosen,
+    used_target_grammar: used,
+    grammar_score: Math.max(0, Math.min(5, grammarScore)),
+    character_reaction: reaction,
+    teacher_tip: tip,
+    custom_anime_prompt: node.animePrompt
+  };
+}
+
+function buildSystemPrompt(node, transcript) {
+  return `You are the Game Master and Character Actor for an interactive ESL Visual Novel (British English tips).
+Current Scene Speaker: "${node.speaker}"
+Character just said: "${node.defaultLine}"
+Speaking Goal for Student: "${node.goalHint}"
+TARGET GRAMMAR (required for success / Golden endings):
+${JSON.stringify(node.targetGrammar || {}, null, 2)}
+
+Available Story Branches from this node:
+${JSON.stringify(node.branches, null, 2)}
+
+Analyse what the student said ("${transcript}").
+1. Pick the single best matching "targetNode" from the Available Story Branches.
+2. Set used_target_grammar true ONLY if the student used the target grammar item / patterns / keywords in a meaningful way.
+3. grammar_score: integer 0-5 for how well they used the target grammar.
+4. If used_target_grammar is false, do NOT choose a Golden or clear-success ending — prefer remake / manager / fail / meme branches as appropriate.
+5. Write a lively 1-2 sentence in-character reaction.
+6. Provide a short ESL teacher tip that mentions the grammar score and how to improve.
+7. Write a short custom anime image prompt for the reaction.
+
+Respond ONLY in valid JSON:
+{
+  "chosen_target_node": "exact_targetNode_id",
+  "used_target_grammar": true,
+  "grammar_score": 5,
+  "character_reaction": "In-character spoken response to the student's exact words",
+  "teacher_tip": "Specific feedback on Target Grammar and how to improve",
+  "custom_anime_prompt": "anime visual novel style, detailed scene description matching the reaction"
+}`;
+}
+
+function applyJudgeResult(node, out) {
+  let chosen = out.chosen_target_node;
+  if (!currentEpisode.nodes[chosen]) {
+    chosen = node.branches?.[0]?.targetNode || currentNodeKey;
+  }
+  const used = !!out.used_target_grammar;
+  const score = Math.max(0, Math.min(5, Number(out.grammar_score) || 0));
+  if (!used) {
+    chosen = preferNonGolden(node, chosen);
+  }
+  const tip = out.teacher_tip || "Keep practising the mission patterns.";
+  document.getElementById("teacherTip").innerHTML =
+    `${escapeHtml(tip)} <span class="score-pill">Grammar ${score}/5${used ? " · used" : " · missed"}</span>`;
+  goToNode(chosen, out.character_reaction || null, out.custom_anime_prompt || null);
+}
+
+async function evaluateStudentSpeech(transcript) {
+  const node = currentEpisode.nodes[currentNodeKey];
+  if (node.isEnding) {
+    alert("This branch has ended. Tap Restart.");
+    return;
+  }
+  document.getElementById("transcriptLog").textContent = `"${transcript}"`;
+  document.getElementById("dialogueText").textContent = "… reacting …";
+
+  // 1) Worker path (live later)
+  if (USE_WORKER) {
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "speaknovel",
+          episode: currentEpisodeKey,
+          nodeKey: currentNodeKey,
+          transcript,
+          node: {
+            speaker: node.speaker,
+            defaultLine: node.defaultLine,
+            goalHint: node.goalHint,
+            targetGrammar: node.targetGrammar,
+            branches: node.branches
+          }
+        })
+      });
+      if (!res.ok) throw new Error("Worker HTTP " + res.status);
+      const out = await res.json();
+      applyJudgeResult(node, out);
+      return;
+    } catch (err) {
+      document.getElementById("teacherTip").textContent =
+        "Worker unavailable — falling back to mock router.";
+    }
+  }
+
+  // 2) Optional teacher-only DeepSeek (Drive preview)
+  const apiKey = document.getElementById("apiKey")?.value.trim();
+  const teacherOpen = document.getElementById("teacherPanel").classList.contains("open");
+  if (apiKey && teacherOpen) {
+    try {
+      const res = await fetch("https://api.deepseek.com/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: buildSystemPrompt(node, transcript) },
+            { role: "user", content: `Student said: "${transcript}"` }
+          ]
+        })
+      });
+      const data = await res.json();
+      const out = JSON.parse(data.choices[0].message.content);
+      applyJudgeResult(node, out);
+      return;
+    } catch (err) {
+      document.getElementById("teacherTip").textContent =
+        "DeepSeek key failed — using mock router.";
+    }
+  }
+
+  // 3) Mock keyword / heuristic router
+  applyJudgeResult(node, mockRoute(transcript, node));
+}
+
+function clearMicListenTimer() {
+  if (micListenTimer) {
+    clearTimeout(micListenTimer);
+    micListenTimer = null;
+  }
+}
+
+function resetMicUI() {
+  clearMicListenTimer();
+  const btn = document.getElementById("micBtn");
+  if (!btn) return;
+  btn.classList.remove("listening");
+  btn.textContent = "Speak";
+}
+
+function setupVoice() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    recognition = null;
+    return;
+  }
+  recognition = new SpeechRec();
+  const langs = ["en-HK", "en-GB", "en-US"];
+  let langIndex = 0;
+  recognition.lang = langs[0];
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onresult = e => {
+    resetMicUI();
+    const text = e.results[0][0].transcript;
+    evaluateStudentSpeech(text);
+  };
+  recognition.onerror = () => {
+    resetMicUI();
+    // Soft fallback through preferred locales on next start
+    langIndex = (langIndex + 1) % langs.length;
+    recognition.lang = langs[langIndex];
+  };
+  recognition.onend = () => {
+    resetMicUI();
+  };
+}
+
+function toggleMic() {
+  if (!recognition) {
+    resetMicUI();
+    alert("Speech recognition needs Chrome or Edge. You can type instead.");
+    return;
+  }
+  const btn = document.getElementById("micBtn");
+  clearMicListenTimer();
+  btn.classList.add("listening");
+  btn.textContent = "Listening…";
+  micListenTimer = setTimeout(() => {
+    micListenTimer = null;
+    try { recognition.abort(); } catch (_) {}
+    resetMicUI();
+  }, MIC_LISTEN_MS);
+  try {
+    recognition.start();
+  } catch (_) {
+    /* already started — keep timeout so UI still recovers */
+  }
+}
+
+function submitText() {
+  const el = document.getElementById("textInput");
+  if (!el.value.trim()) return;
+  evaluateStudentSpeech(el.value.trim());
+  el.value = "";
+}
+
+initVN();
+</script>
+</body>
+</html>
