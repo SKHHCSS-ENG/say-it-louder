@@ -3726,6 +3726,8 @@ async function evaluateStudentSpeech(transcript) {
 /* ============================================================================
    9. SPEECH RECOGNITION & MANUAL TEXT FALLBACK
    ============================================================================ */
+let accumulatedFinalSpeech = "";
+
 function clearMicTimer() {
   if (micListenTimer) {
     clearTimeout(micListenTimer);
@@ -3742,6 +3744,23 @@ function resetMicUI() {
   btn.innerHTML = "🎤 Tap &amp; Speak";
 }
 
+function finishMicRecordingToInput() {
+  isListening = false;
+  try {
+    if (recognition) recognition.stop();
+  } catch (_) {}
+  resetMicUI();
+  const input = document.getElementById("textInput");
+  if (!input) return;
+  const val = input.value.trim();
+  if (val) {
+    document.getElementById("transcriptLog").textContent = `"${val}"`;
+    handleLiveInput(val);
+    showToast("Voice captured! Review your line below and click Send.");
+  }
+  input.focus();
+}
+
 function setupVoiceRecognition() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRec) {
@@ -3750,44 +3769,52 @@ function setupVoiceRecognition() {
   }
   recognition = new SpeechRec();
   recognition.lang = document.getElementById("srLangSelect")?.value || "en-GB";
-  recognition.continuous = false;
+  // Continuous manual-toggle mode so student pauses/hesitations never cut off or auto-submit
+  recognition.continuous = true;
   recognition.interimResults = true;
 
   recognition.onresult = (event) => {
     let interim = "";
-    let finalTranscript = "";
     for (let i = event.resultIndex; i < event.results.length; i++) {
       const piece = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
-        finalTranscript += piece;
+        accumulatedFinalSpeech = [accumulatedFinalSpeech, piece.trim()]
+          .filter(Boolean)
+          .join(" ")
+          .replace(/\s+/g, " ")
+          .trim();
       } else {
         interim += piece;
       }
     }
-    const currentText = (finalTranscript || interim).trim();
-    if (currentText) {
-      document.getElementById("textInput").value = currentText;
-      handleLiveInput(currentText);
-    }
-    if (finalTranscript.trim()) {
-      resetMicUI();
-      document.getElementById("textInput").value = "";
-      evaluateStudentSpeech(finalTranscript.trim());
+    const combinedText = [accumulatedFinalSpeech, interim.trim()]
+      .filter(Boolean)
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (combinedText) {
+      document.getElementById("textInput").value = combinedText;
+      document.getElementById("transcriptLog").textContent = `"${combinedText}…"`;
+      handleLiveInput(combinedText);
     }
   };
 
-  recognition.onerror = () => {
+  recognition.onerror = (event) => {
+    // Ignore "no-speech" pauses while the student is thinking so the mic stays open
+    if (event && (event.error === "no-speech" || event.error === "aborted")) {
+      return;
+    }
     resetMicUI();
     showToast("Microphone unavailable—type your line in the box below.");
   };
 
   recognition.onend = () => {
+    // If the student hasn't tapped to stop yet (and 30s timer hasn't expired), keep listening across pauses
     if (isListening) {
-      resetMicUI();
-      const leftover = document.getElementById("textInput").value.trim();
-      if (leftover) {
-        document.getElementById("textInput").value = "";
-        evaluateStudentSpeech(leftover);
+      try {
+        recognition.start();
+      } catch (_) {
+        finishMicRecordingToInput();
       }
     }
   };
@@ -3813,25 +3840,35 @@ function toggleMic() {
     return;
   }
 
+  // 2nd Tap: Stop recording and keep transcript in #textInput for review before clicking Send
   if (isListening) {
-    try { recognition.stop(); } catch (_) {}
-    resetMicUI();
+    finishMicRecordingToInput();
     return;
   }
 
+  // Stop any character TTS playback before opening the mic
+  if (currentTtsAudio) {
+    try { currentTtsAudio.pause(); } catch (_) {}
+    currentTtsAudio = null;
+  }
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
   }
 
+  // Start from whatever is currently in the input box (or empty string)
+  accumulatedFinalSpeech = document.getElementById("textInput").value.trim();
+
   isListening = true;
   const btn = document.getElementById("micBtn");
   btn.classList.add("listening");
-  btn.textContent = "🛑 Listening… (Tap to finish)";
+  btn.textContent = "🛑 Listening… (Tap when done)";
 
+  // 30-second safety cap
   micListenTimer = setTimeout(() => {
-    try { recognition.stop(); } catch (_) {}
-    resetMicUI();
-  }, 9000);
+    if (isListening) {
+      finishMicRecordingToInput();
+    }
+  }, 30000);
 
   try {
     recognition.start();
@@ -3842,10 +3879,18 @@ function toggleMic() {
 
 function submitText() {
   getAudioContext();
+  if (isListening) {
+    isListening = false;
+    try {
+      if (recognition) recognition.stop();
+    } catch (_) {}
+    resetMicUI();
+  }
   const input = document.getElementById("textInput");
   const val = input.value.trim();
   if (!val) return;
   input.value = "";
+  accumulatedFinalSpeech = "";
   evaluateStudentSpeech(val);
 }
 
