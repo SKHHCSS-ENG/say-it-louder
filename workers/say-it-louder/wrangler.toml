@@ -1,0 +1,21 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "say-it-louder"
+main = "src/index.js"
+compatibility_date = "2026-11-03"
+workers_dev = true
+
+# Secrets are not config. Set them with `wrangler secret put` (never commit values):
+#   DEEPSEEK_API_KEY      required for SpeakNovel
+#   AZURE_SPEECH_KEY      optional Azure neural TTS
+#   AZURE_SPEECH_REGION   optional; the Worker defaults to eastasia when unset
+
+[observability]
+enabled = true
+
+  [observability.logs]
+  enabled = true
+  head_sampling_rate = 1
+
+  [observability.traces]
+  enabled = true
+  head_sampling_rate = 1

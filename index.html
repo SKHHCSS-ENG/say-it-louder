@@ -247,15 +247,7 @@
       border: 1px solid var(--border-strong);
       background: #e2f1f6;
       box-shadow: var(--shadow-lg);
-      display: flex;
-      align-items: flex-end;
-    }
-
-    /* A 360px floor plus 16/9 transfers into ~640px of width. Keep that only on a wide desk. */
-    @media (min-width: 1100px) {
-      .vn-stage {
-        min-height: 360px;
-      }
+      display: block;
     }
 
     #sceneImg {
@@ -284,9 +276,9 @@
 
     .stage-top-bar {
       position: absolute;
-      top: 0.75rem;
-      left: 0.75rem;
-      right: 0.75rem;
+      top: 0.65rem;
+      left: 0.65rem;
+      right: 0.65rem;
       z-index: 3;
       display: flex;
       justify-content: space-between;
@@ -296,14 +288,14 @@
     }
 
     .scene-badge {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.9);
       color: var(--navy);
-      padding: 0.35rem 0.75rem;
+      padding: 0.3rem 0.7rem;
       border-radius: 999px;
       border: 1px solid var(--border);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
-      box-shadow: 0 2px 10px rgba(18, 58, 77, 0.1);
+      box-shadow: 0 2px 8px rgba(18, 58, 77, 0.1);
       backdrop-filter: blur(6px);
       max-width: 100%;
       min-width: 0;
@@ -313,12 +305,11 @@
     }
 
     .ending-type-badge {
-      padding: 0.35rem 0.8rem;
+      padding: 0.3rem 0.75rem;
       border-radius: 999px;
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       font-weight: 800;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
+      letter-spacing: 0.02em;
       box-shadow: 0 2px 10px rgba(18, 58, 77, 0.14);
     }
 
@@ -346,58 +337,17 @@
       border: 1px solid #d8b4fe;
     }
 
-    /* Dialogue Overlay Box */
+    /* Dialogue Card Seated Cleanly Below the 16:9 Picture */
     .vn-textbox {
       position: relative;
-      z-index: 3;
-      width: calc(100% - 1.5rem);
-      margin: 0 auto 0.75rem;
-      background: rgba(255, 255, 255, 0.95);
+      width: 100%;
+      margin: 0;
+      background: var(--card);
       border: 2px solid var(--accent);
-      border-radius: 12px;
-      padding: 0.85rem 1.05rem;
-      box-shadow: 0 8px 24px rgba(18, 58, 77, 0.16);
-      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.1rem;
+      box-shadow: var(--shadow);
       cursor: pointer;
-    }
-
-    /*
-      On a phone, 16/9 of the full width is shorter than the dialogue overlay,
-      so the speaker line was clipped. Keep the picture 16/9 and stack the line under it.
-      These rules follow the base image/textbox styles so they win in the cascade.
-      The desk overlay stays cinematic.
-    */
-    @media (max-width: 959px) {
-      .vn-stage {
-        aspect-ratio: auto;
-        height: auto;
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      #sceneImg {
-        position: relative;
-        inset: auto;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 9;
-        flex: none;
-      }
-
-      .scene-fallback {
-        inset: auto;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 9;
-      }
-
-      .vn-textbox {
-        width: auto;
-        margin: 0.55rem;
-      }
     }
 
     .vn-textbox-header {
@@ -884,19 +834,19 @@
           <div class="scene-badge" id="sceneTitle">Ep 1: Bubble Tea Disaster</div>
           <div class="ending-type-badge golden" id="endingBadge" hidden>GOLDEN S-RANK</div>
         </div>
-
-        <div class="vn-textbox" id="dialogueBox" onclick="finishTypewriter()">
-          <div class="vn-textbox-header">
-            <span class="vn-speaker" id="speakerName">Angry Customer (Ken)</span>
-            <div class="vn-stage-controls" onclick="event.stopPropagation()">
-              <button type="button" class="ghost mini-btn" id="replayVoiceBtn" onclick="replayCharacterVoice()">🔊 Replay Line</button>
-              <button type="button" class="mini-btn" id="playAgainStageBtn" onclick="restartStory()" hidden>🔄 Play Again</button>
-            </div>
-          </div>
-          <div class="vn-dialogue" id="dialogueText"></div>
-          <div class="vn-situation" id="situationPrompt"></div>
-        </div>
       </section>
+
+      <div class="vn-textbox" id="dialogueBox" onclick="finishTypewriter()">
+        <div class="vn-textbox-header">
+          <span class="vn-speaker" id="speakerName">Ken (Customer)</span>
+          <div class="vn-stage-controls" onclick="event.stopPropagation()">
+            <button type="button" class="ghost mini-btn" id="replayVoiceBtn" onclick="replayCharacterVoice()">🔊 Replay Line</button>
+            <button type="button" class="mini-btn" id="playAgainStageBtn" onclick="restartStory()" hidden>🔄 Play Again</button>
+          </div>
+        </div>
+        <div class="vn-dialogue" id="dialogueText"></div>
+        <div class="vn-situation" id="situationPrompt"></div>
+      </div>
 
       <!-- Compact Episode Endings Tray (toggled by clicking the 🏆 chip) -->
       <div class="endings-drawer" id="endingsDrawer">
@@ -985,7 +935,7 @@
 
           <div class="teacher-field">
             <label for="workerUrlInput">Cloudflare Worker Proxy URL (optional)</label>
-            <input type="url" id="workerUrlInput" placeholder="https://deepseek-explain.skhhcss-eng.workers.dev" autocomplete="off" oninput="saveTeacherSettings()" />
+            <input type="url" id="workerUrlInput" placeholder="https://say-it-louder.skhhcss-eng.workers.dev" autocomplete="off" oninput="saveTeacherSettings()" />
           </div>
 
           <div class="teacher-field">
@@ -1018,7 +968,7 @@
    ============================================================================ */
 // Baked student path. Tier-1 Worker proxy runs with an empty DeepSeek key.
 // Teacher Controls can override the URL; a blank field still uses this bake.
-const DEFAULT_WORKER_URL = "https://deepseek-explain.skhhcss-eng.workers.dev";
+const DEFAULT_WORKER_URL = "https://say-it-louder.skhhcss-eng.workers.dev";
 const LS_KEYS = {
   API_KEY: "sayitlouder.deepseekKey",
   WORKER_URL: "sayitlouder.workerUrl",
@@ -1242,7 +1192,7 @@ const EPISODES = {
     startNode: "node_start",
     nodes: {
       node_start: {
-        speaker: "Angry Customer (Ken)",
+        speaker: "Ken (Customer)",
         defaultLine: "Hey!! The lid wasn't sealed properly! Now my new white hoodie is covered in purple taro milk tea! What are you going to do?!",
         goalHint: "🎯 Step 1 of 4: Apologise politely and offer tissues.",
         imageSrc: "./assets/ep1/ken_spill.webp",
@@ -1286,7 +1236,7 @@ const EPISODES = {
       },
 
       node_manager: {
-        speaker: "Furious Customer (Ken)",
+        speaker: "Ken (Customer)",
         defaultLine: "Just 'sorry'?! My white hoodie is ruined! Give me one good reason why I shouldn't call your manager right now!",
         goalHint: "🎯 Retry Step 1: Use 'Allow me to…' or 'Would you let me…' to offer help.",
         imageSrc: "./assets/ep1/ken_furious.webp",
@@ -1318,7 +1268,7 @@ const EPISODES = {
       },
 
       node_stain: {
-        speaker: "Worried Customer (Ken)",
+        speaker: "Ken (Customer)",
         defaultLine: "Thanks for the dry tissues, but the purple stain is still soaking into my sleeve! Do you have anything else to help clean it?",
         goalHint: "🎯 Step 2 of 4: Offer a wet cloth, soda water, or a refund using 'Would you like…?' or 'Could I…?'.",
         imageSrc: "./assets/ep1/ken_calmer.webp",
@@ -1356,7 +1306,7 @@ const EPISODES = {
       },
 
       node_remake: {
-        speaker: "Calmer Customer (Ken)",
+        speaker: "Ken (Customer)",
         defaultLine: "Phew, the wet cloth helped a lot! I'm late for work now—please remake my taro milk tea with half sugar and less ice.",
         goalHint: "🎯 Step 3 of 4: Repeat the order clearly with BOTH 'half sugar' and 'less ice'.",
         imageSrc: "./assets/ep1/ken_calmer.webp",
@@ -1388,7 +1338,7 @@ const EPISODES = {
       },
 
       node_voucher: {
-        speaker: "Pleased Customer (Ken)",
+        speaker: "Ken (Customer)",
         defaultLine: "That was fast! Before I head to the MTR, is there anything else from the shop to make up for the spill?",
         goalHint: "🎯 Step 4 of 4: Hand over the drink and offer a free voucher or pearls.",
         imageSrc: "./assets/ep1/ending_golden.webp",
@@ -1424,7 +1374,8 @@ const EPISODES = {
         endingId: "golden_service",
         endingType: "golden",
         endingLabel: "5-Star Customer Service",
-        speaker: "✨ GOLDEN ENDING: 5-Star Customer Service",
+        endingLabel: "✨ GOLDEN ENDING: 5-Star Customer Service",
+        speaker: "Ken (Customer)",
         defaultLine: "This taro milk tea is spot on—half sugar and less ice! Thank you for the tissues, the wet cloth, and the free voucher. Here is a HK$100 tip!",
         goalHint: "🏆 Golden S-Rank unlocked! Try discovering the secret or chaos endings.",
         imageSrc: "./assets/ep1/ending_golden.webp",
@@ -1438,7 +1389,8 @@ const EPISODES = {
         endingId: "tiktok_outrage",
         endingType: "fail",
         endingLabel: "TikTok Outrage",
-        speaker: "💥 FAIL ENDING: TikTok Outrage",
+        endingLabel: "💥 FAIL ENDING: TikTok Outrage",
+        speaker: "Ken (Customer)",
         defaultLine: "Unbelievable attitude! I'm posting this clip right now—'Rudest Bubble Tea Staff in Mong Kok' just hit 50,000 views in three minutes!",
         goalHint: "💡 Tip: Start with 'I'm so sorry! Let me get some tissues.'",
         imageSrc: "./assets/ep1/ending_viral.webp",
@@ -1452,8 +1404,9 @@ const EPISODES = {
         endingId: "promoted_customer",
         endingType: "fail",
         endingLabel: "Promoted to Customer",
-        speaker: "💀 FAIL ENDING: Promoted to Customer",
-        defaultLine: "The shop manager walked out, heard your weak excuse, and handed you a cup of bubble tea: 'Take off your apron—you're a customer now!'",
+        endingLabel: "💀 FAIL ENDING: Promoted to Customer",
+        speaker: "Ken (Customer)",
+        defaultLine: "That excuse is ridiculous! I just called your shop manager over, and he told you to take off your apron—you're a customer now!",
         goalHint: "💡 Tip: Use 'Allow me to…' or 'Let me…' with a clear action.",
         imageSrc: "./assets/ep1/ending_fired.webp",
         plate: "plates/ep1-ending_fired.webp",
@@ -1466,7 +1419,8 @@ const EPISODES = {
         endingId: "ice_mountain",
         endingType: "chaos",
         endingLabel: "200% Ice Mountain",
-        speaker: "🥶 CHAOS ENDING: 200% Ice Mountain",
+        endingLabel: "🥶 CHAOS ENDING: 200% Ice Mountain",
+        speaker: "Ken (Customer)",
         defaultLine: "Brrr!! Because the order wasn't clear, the kitchen packed my cup with a giant mountain of ice and triple syrup! My teeth are frozen solid!",
         goalHint: "💡 Tip: Say BOTH quantifiers clearly: 'with half sugar and less ice'.",
         imageSrc: "./assets/ep1/ending_ice.webp",
@@ -1480,7 +1434,8 @@ const EPISODES = {
         endingId: "milan_fashion",
         endingType: "meme",
         endingLabel: "Milan Fashion Week",
-        speaker: "🤪 SECRET MEME ENDING: Milan Fashion Week",
+        endingLabel: "🤪 SECRET MEME ENDING: Milan Fashion Week",
+        speaker: "Ken (Customer)",
         defaultLine: "Wait… you think this purple taro splash looks like designer tie-dye?! A Milan fashion scout outside just bought my stained hoodie for HK$10,000!",
         goalHint: "🎉 Secret Meme Ending unlocked! Now try the polite path for Golden S-Rank.",
         imageSrc: "./assets/ep1/ending_fashion.webp",
@@ -1501,7 +1456,7 @@ const EPISODES = {
     startNode: "node_start",
     nodes: {
       node_start: {
-        speaker: "Distressed Owner (Chloe)",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Excuse me! Have you seen my golden retriever puppy, Milo?! His lead slipped near the MTR exit! Did you see a puppy nearby?",
         goalHint: "🎯 Step 1 of 4: Describe the puppy using 'which' or 'that'.",
         imageSrc: "./assets/ep2/chloe_search.webp",
@@ -1545,7 +1500,7 @@ const EPISODES = {
       },
 
       node_clarify_dog: {
-        speaker: "Anxious Owner (Chloe)",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Wait—there are several dogs near the shops! How do I know it's Milo? Please describe him with 'which' or 'that'.",
         goalHint: "🎯 Retry Step 1: Say 'It is the puppy which has a blue scarf.'",
         imageSrc: "./assets/ep2/chloe_anxious.webp",
@@ -1577,7 +1532,7 @@ const EPISODES = {
       },
 
       node_clue: {
-        speaker: "Hopeful Owner (Chloe)",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "A blue scarf and a fluffy tail—that's definitely Milo! What was he doing when you saw him?",
         goalHint: "🎯 Step 2 of 4: Tell Chloe what Milo was doing outside the bakery.",
         imageSrc: "./assets/ep2/chloe_relieved.webp",
@@ -1609,7 +1564,7 @@ const EPISODES = {
       },
 
       node_directions: {
-        speaker: "Relieved Owner (Chloe)",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Of course—Milo loves pineapple buns! How do I walk to the bakery from this pedestrian crossing?",
         goalHint: "🎯 Step 3 of 4: Give street directions using 'along', 'past', and 'turn left'.",
         imageSrc: "./assets/ep2/chloe_relieved.webp",
@@ -1641,7 +1596,7 @@ const EPISODES = {
       },
 
       node_reunion: {
-        speaker: "Excited Owner (Chloe)",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Look, there he is by the bakery door! Wait—he looks a bit startled by the traffic. How should I approach him so he doesn't run?",
         goalHint: "🎯 Step 4 of 4: Advise Chloe calmly using adverbs ('walk slowly', 'call softly').",
         imageSrc: "./assets/ep2/ending_golden.webp",
@@ -1677,7 +1632,8 @@ const EPISODES = {
         endingId: "milo_rescued",
         endingType: "golden",
         endingLabel: "Milo Rescued",
-        speaker: "✨ GOLDEN ENDING: Milo Rescued!",
+        endingLabel: "✨ GOLDEN ENDING: Milo Rescued!",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Milo!! I called his name softly and he ran straight into my arms outside the bakery! Thank you so much for helping me find him!",
         goalHint: "🏆 Golden S-Rank unlocked! Your descriptions and directions saved the day.",
         imageSrc: "./assets/ep2/ending_golden.webp",
@@ -1691,7 +1647,8 @@ const EPISODES = {
         endingId: "grumpy_cat",
         endingType: "chaos",
         endingLabel: "The Grumpy Alley Cat",
-        speaker: "😾 CHAOS ENDING: The Grumpy Alley Cat",
+        endingLabel: "😾 CHAOS ENDING: The Grumpy Alley Cat",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Aaah! We ended up in a narrow back alley, and instead of Milo we met a giant grumpy ginger cat guarding a plate of fishballs!",
         goalHint: "💡 Tip: Use clear directions ('walk straight along… turn left') and calm adverbs ('slowly', 'softly').",
         imageSrc: "./assets/ep2/ending_cat.webp",
@@ -1705,7 +1662,8 @@ const EPISODES = {
         endingId: "lost_rain",
         endingType: "fail",
         endingLabel: "Lost in the Rain",
-        speaker: "🌧️ FAIL ENDING: Lost in the Rain",
+        endingLabel: "🌧️ FAIL ENDING: Lost in the Rain",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Before we could work out which dog it was, heavy rain started falling and Milo wandered onto another street… We'll put up posters tomorrow.",
         goalHint: "💡 Tip: Use 'which' or 'that' ('a puppy which has a blue scarf') to identify things clearly.",
         imageSrc: "./assets/ep2/ending_rain.webp",
@@ -1719,7 +1677,8 @@ const EPISODES = {
         endingId: "circus_milo",
         endingType: "meme",
         endingLabel: "Milo Joins the Circus",
-        speaker: "🎪 SECRET MEME ENDING: Milo Joins the Circus",
+        endingLabel: "🎪 SECRET MEME ENDING: Milo Joins the Circus",
+        speaker: "Chloe (Puppy Owner)",
         defaultLine: "Wait… you weren't joking?! Milo is balancing on a giant rainbow ball for a street carnival troupe and the crowd is cheering!",
         goalHint: "🎉 Secret Meme Ending unlocked! Try guiding Chloe with relative clauses for the Golden Ending.",
         imageSrc: "./assets/ep2/ending_circus.webp",
@@ -1740,7 +1699,7 @@ const EPISODES = {
     startNode: "node_start",
     nodes: {
       node_start: {
-        speaker: "Lazy Groupmate (Leo)",
+        speaker: "Leo (Groupmate)",
         defaultLine: "Relax! Our History presentation isn't until tomorrow morning. Let me play two more matches—you're good at English, so you can make the slides, right?",
         goalHint: "🎯 Step 1 of 4: Negotiate using 'If you…, we will…' or 'Unless you…'.",
         imageSrc: "./assets/ep3/leo_gaming.webp",
@@ -1784,7 +1743,7 @@ const EPISODES = {
       },
 
       node_excuses: {
-        speaker: "Unbothered Groupmate (Leo)",
+        speaker: "Leo (Groupmate)",
         defaultLine: "Come on, don't just nag me! Give me a fair deal using 'If' or 'Unless' so I close my game!",
         goalHint: "🎯 Retry Step 1: Say 'If you close the game, I will write the notes.'",
         imageSrc: "./assets/ep3/leo_smirk.webp",
@@ -1816,7 +1775,7 @@ const EPISODES = {
       },
 
       node_topic: {
-        speaker: "Curious Groupmate (Leo)",
+        speaker: "Leo (Groupmate)",
         defaultLine: "All right, I've closed the game! First, which topic on old Hong Kong history should we choose for our slides?",
         goalHint: "🎯 Step 2 of 4: Suggest a topic using 'How about…?' or 'Why don't we…?'.",
         imageSrc: "./assets/ep3/leo_laptop.webp",
@@ -1848,7 +1807,7 @@ const EPISODES = {
       },
 
       node_delegate: {
-        speaker: "Cooperative Groupmate (Leo)",
+        speaker: "Leo (Groupmate)",
         defaultLine: "Great topic! Now I've opened Google Slides. How should we divide the work between us?",
         goalHint: "🎯 Step 3 of 4: Split the tasks using 'Why don't you… while I…?'.",
         imageSrc: "./assets/ep3/leo_laptop.webp",
@@ -1886,7 +1845,7 @@ const EPISODES = {
       },
 
       node_rehearse: {
-        speaker: "Motivated Groupmate (Leo)",
+        speaker: "Leo (Groupmate)",
         defaultLine: "Awesome, the slides and script are nearly done! Should we practise speaking through the presentation once before tomorrow?",
         goalHint: "🎯 Step 4 of 4: Agree to practise together using 'Let's practise…' or 'Shall we…?'.",
         imageSrc: "./assets/ep3/ending_golden.webp",
@@ -1922,7 +1881,8 @@ const EPISODES = {
         endingId: "teamwork_aplus",
         endingType: "golden",
         endingLabel: "Top Marks Teamwork",
-        speaker: "✨ GOLDEN ENDING: Top Marks Teamwork",
+        endingLabel: "✨ GOLDEN ENDING: Top Marks Teamwork",
+        speaker: "Leo (Groupmate)",
         defaultLine: "We nailed it! Our slides matched the script smoothly, and Miss Wong gave our group top marks for best collaboration!",
         goalHint: "🏆 Golden S-Rank unlocked! Great negotiation and task delegation.",
         imageSrc: "./assets/ep3/ending_golden.webp",
@@ -1936,8 +1896,9 @@ const EPISODES = {
         endingId: "sleepless_doormat",
         endingType: "fail",
         endingLabel: "The Sleepless Doormat",
-        speaker: "😴 FAIL ENDING: The Sleepless Doormat",
-        defaultLine: "Leo went straight to sleep while you stayed up until 4:30 a.m. making all 15 slides alone. During the lesson, you fell asleep standing at the front!",
+        endingLabel: "😴 FAIL ENDING: The Sleepless Doormat",
+        speaker: "Leo (Groupmate)",
+        defaultLine: "Thanks for making all 15 slides by yourself until 4:30 a.m.! Wait… why did you just fall asleep standing in front of the class?!",
         goalHint: "💡 Tip: Use 'If you stop playing, we will…' and 'Why don't you… while I…?' to share work fairly.",
         imageSrc: "./assets/ep3/ending_doormat.webp",
         plate: "plates/ep3-ending_doormat.webp",
@@ -1950,8 +1911,9 @@ const EPISODES = {
         endingId: "disqualified_teacher",
         endingType: "fail",
         endingLabel: "Disqualified by Teacher",
-        speaker: "💥 FAIL ENDING: Disqualified by Teacher",
-        defaultLine: "Because you two argued instead of agreeing on a plan, your slide deck had only a title slide. Miss Wong disqualified the group on the spot!",
+        endingLabel: "💥 FAIL ENDING: Disqualified by Teacher",
+        speaker: "Leo (Groupmate)",
+        defaultLine: "Oh no… because we kept arguing instead of agreeing on a plan, our slide deck only has a title slide and Miss Wong just disqualified us!",
         goalHint: "💡 Tip: Negotiate calmly with Type 1 Conditionals and polite suggestions ('Why don't you…').",
         imageSrc: "./assets/ep3/ending_disqualified.webp",
         plate: "plates/ep3-ending_disqualified.webp",
@@ -1964,8 +1926,9 @@ const EPISODES = {
         endingId: "esports_god",
         endingType: "meme",
         endingLabel: "1v1 Esports Champion",
-        speaker: "🤪 SECRET MEME ENDING: 1v1 Esports Champion",
-        defaultLine: "You challenged Leo to a 1v1 match, defeated him in 90 seconds, and got scouted by a pro Hong Kong esports team! (Miss Wong still wants your slides though!)",
+        endingLabel: "🤪 SECRET MEME ENDING: 1v1 Esports Champion",
+        speaker: "Leo (Groupmate)",
+        defaultLine: "No way—you beat me in 90 seconds and got us scouted by a pro Hong Kong esports team! Miss Wong still wants our History slides though!",
         goalHint: "🎉 Secret Meme Ending unlocked! Replay to practise Type 1 Conditionals for the Golden Ending.",
         imageSrc: "./assets/ep3/ending_esports.webp",
         plate: "plates/ep3-ending_meme.webp",
@@ -1985,7 +1948,7 @@ const EPISODES = {
     startNode: "node_start",
     nodes: {
       node_start: {
-        speaker: "Customs Inspector (Officer Vance)",
+        speaker: "Officer Vance (Customs Inspector)",
         defaultLine: "Step aside, please. Our X-ray scanner detected a buzzing wooden box inside your suitcase. Where and when did you get it?",
         goalHint: "🎯 Step 1 of 4: Explain using 'While I was [V-ing]…, I bought…'.",
         imageSrc: "./assets/ep4/vance_scan.webp",
@@ -2029,7 +1992,7 @@ const EPISODES = {
       },
 
       node_suspicion: {
-        speaker: "Sceptical Inspector (Officer Vance)",
+        speaker: "Officer Vance (Customs Inspector)",
         defaultLine: "Hold on. Your timeline isn't clear. What were you doing in Japan when you bought this wooden box?",
         goalHint: "🎯 Retry Step 1: Say 'While I was visiting Tokyo, I bought this box.'",
         imageSrc: "./assets/ep4/vance_skeptical.webp",
@@ -2061,7 +2024,7 @@ const EPISODES = {
       },
 
       node_open_box: {
-        speaker: "Customs Inspector (Officer Vance)",
+        speaker: "Officer Vance (Customs Inspector)",
         defaultLine: "All right, it's a souvenir from Japan. Why is the box making a buzzing sound inside your suitcase right now?",
         goalHint: "🎯 Step 2 of 4: Explain what happened while you were packing.",
         imageSrc: "./assets/ep4/vance_skeptical.webp",
@@ -2093,7 +2056,7 @@ const EPISODES = {
       },
 
       node_inspect_wood: {
-        speaker: "Customs Inspector (Officer Vance)",
+        speaker: "Officer Vance (Customs Inspector)",
         defaultLine: "I see—it's just a wind-up music box. However, untreated wood is restricted. How do we know this wood is safe?",
         goalHint: "🎯 Step 3 of 4: Use Passive Voice ('The wood was treated…', 'It was certified…').",
         imageSrc: "./assets/ep4/vance_inspect.webp",
@@ -2125,7 +2088,7 @@ const EPISODES = {
       },
 
       node_declare: {
-        speaker: "Customs Inspector (Officer Vance)",
+        speaker: "Officer Vance (Customs Inspector)",
         defaultLine: "Good. One final check: where is the safety certificate, and who is this souvenir for?",
         goalHint: "🎯 Step 4 of 4: State where the certificate is attached and who the gift is for.",
         imageSrc: "./assets/ep4/vance_inspect.webp",
@@ -2161,7 +2124,8 @@ const EPISODES = {
         endingId: "welcome_home",
         endingType: "golden",
         endingLabel: "Welcome Home",
-        speaker: "✨ GOLDEN ENDING: Welcome Home",
+        endingLabel: "✨ GOLDEN ENDING: Welcome Home",
+        speaker: "Officer Vance (Customs Inspector)",
         defaultLine: "Certificate verified—treated wood, duty-free seal intact. Thank you for your polite cooperation. Welcome back to Hong Kong!",
         goalHint: "🏆 Golden S-Rank unlocked! Great use of Past Continuous and Passive Voice.",
         imageSrc: "./assets/ep4/ending_golden.webp",
@@ -2175,8 +2139,9 @@ const EPISODES = {
         endingId: "detention_12h",
         endingType: "fail",
         endingLabel: "12-Hour Detention",
-        speaker: "🚨 FAIL ENDING: 12-Hour Detention",
-        defaultLine: "Because your explanation kept changing, you spent 12 hours in the airport enquiry room while officers checked your luggage piece by piece!",
+        endingLabel: "🚨 FAIL ENDING: 12-Hour Detention",
+        speaker: "Officer Vance (Customs Inspector)",
+        defaultLine: "Your explanation keeps changing! Step into the airport enquiry room—we are going to inspect your luggage piece by piece for the next twelve hours.",
         goalHint: "💡 Tip: Use 'While I was shopping in Tokyo, I bought…' to give a clear timeline.",
         imageSrc: "./assets/ep4/ending_detention.webp",
         plate: "plates/ep4-ending_detention.webp",
@@ -2189,8 +2154,9 @@ const EPISODES = {
         endingId: "quarantine_bin",
         endingType: "chaos",
         endingLabel: "Quarantine Evidence Bin",
-        speaker: "📦 FAIL ENDING: Quarantine Evidence Bin",
-        defaultLine: "Without proof that the wood was treated and certified, Officer Vance placed your souvenir straight into the Agriculture Quarantine Bin!",
+        endingLabel: "📦 FAIL ENDING: Quarantine Evidence Bin",
+        speaker: "Officer Vance (Customs Inspector)",
+        defaultLine: "Without proof that this wood was treated and certified, I am placing your souvenir straight into the Agriculture Quarantine Bin!",
         goalHint: "💡 Tip: Use Passive Voice: 'The wood was treated and checked in Japan.'",
         imageSrc: "./assets/ep4/ending_quarantine.webp",
         plate: "plates/ep4-ending_quarantine.webp",
@@ -2203,8 +2169,9 @@ const EPISODES = {
         endingId: "undercover_ninja",
         endingType: "meme",
         endingLabel: "Undercover Ninja Agent",
-        speaker: "🥷 SECRET MEME ENDING: Undercover Ninja Agent",
-        defaultLine: "Officer Vance gasped, whispered a secret shinobi code phrase, and escorted you through the VIP diplomat lane as a Master Ninja envoy!",
+        endingLabel: "🥷 SECRET MEME ENDING: Undercover Ninja Agent",
+        speaker: "Officer Vance (Customs Inspector)",
+        defaultLine: "Wait… that hand sign! Forgive me, Master Shinobi Envoy—please step right through the VIP diplomat lane immediately!",
         goalHint: "🎉 Secret Meme Ending unlocked! Replay with Passive Voice for the Golden Ending.",
         imageSrc: "./assets/ep4/ending_ninja.webp",
         plate: "plates/ep4-ending_meme.webp",
@@ -2819,24 +2786,20 @@ function triggerPardonScene(customReaction = null, customTip = null) {
   const activeNode = currentEpisode.nodes[currentNodeKey];
   if (!activeNode || activeNode.isEnding) return;
 
-  const pardonSpeaker = `${activeNode.speaker} (Puzzled)`;
+  // Keep the character's exact consistent name and scene illustration while reacting live!
   const lineToSpeak = customReaction || STANDARD_PARDON_SCENE.defaultLine;
 
-  document.getElementById("speakerName").textContent = pardonSpeaker;
+  document.getElementById("speakerName").textContent = activeNode.speaker;
   setDialogueWithTypewriter(lineToSpeak);
   document.getElementById("situationPrompt").textContent =
     activeNode.goalHint || STANDARD_PARDON_SCENE.goalHint;
 
-  // Show the universal puzzled anime illustration while keeping the active step's grammar HUD
-  refreshSceneImage(null, {
-    ...STANDARD_PARDON_SCENE,
-    speaker: pardonSpeaker
-  });
+  refreshSceneImage(null, activeNode);
   renderGrammarCard(activeNode);
   speakCharacterLine(lineToSpeak);
 
   const scorePill = document.getElementById("scorePill");
-  scorePill.textContent = "Say Again ↺";
+  scorePill.textContent = "Improv ↺";
   scorePill.className = "score-pill warn";
 
   document.getElementById("teacherTip").textContent =
@@ -2915,13 +2878,16 @@ function updateEndingBadge(node) {
     chaos: "🌪️ CHAOS ENDING",
     meme: "🤪 SECRET MEME"
   };
-  badge.textContent = labels[t] || "ENDING";
+  badge.textContent = node.endingLabel || labels[t] || "ENDING";
 }
 
 function goToNode(nodeKey, customAiLine = null, customImagePrompt = null) {
   if (nodeKey === "node_pardon") {
     triggerPardonScene(customAiLine);
     return;
+  }
+  if (nodeKey !== currentNodeKey) {
+    currentNodeImprovCount = 0;
   }
   currentNodeKey = nodeKey;
   const node = currentEpisode.nodes[nodeKey];
@@ -2998,36 +2964,97 @@ function preferNonGolden(node, chosen) {
 }
 
 /* Universal check for gibberish, noise, or completely incomprehensible input */
-function isIncomprehensibleInput(transcript, node) {
+let currentNodeImprovCount = 0;
+
+function isIncomprehensibleInput(transcript) {
   const t = String(transcript || "").toLowerCase().trim();
   if (!t || t.length < 2) return true;
 
+  // Must contain at least one word with letters
   const alphaWords = t.match(/[a-z]{2,}/g) || [];
   if (alphaWords.length === 0) return true;
 
-  // Reject keyboard mashing (e.g. "asdfgh", "qwer", "zzzzz", consonants without vowels)
+  // Reject pure consonant keyboard mashing with zero vowels (e.g. "bcdfgh", "qwrty")
   const hasVowel = /[aeiouy]/i.test(t);
   if (!hasVowel) return true;
-  if (/^(asdf|qwer|zxcv|blah|uh+|um+|hmm+|idk|huh|what|\?+)$/i.test(t)) return true;
-  if (/(.){3,}/.test(t)) return true;
 
-  const tg = node.targetGrammar || { keywords: [] };
-  const kwMatch = (tg.keywords || []).some(k => t.includes(String(k).toLowerCase()));
-  if (kwMatch) return false;
+  // Reject classic keyboard mashes or 4+ repeated identical letters (e.g. "asdfgh", "zzzzz")
+  if (/^(asdf[a-z]*|qwer[a-z]*|zxcv[a-z]*|\?+)$/i.test(t)) return true;
+  if (/(.)\1{3,}/.test(t)) return true;
 
-  // Common conversational / episode vocabulary across current and future episodes
-  const knownVocab = /(sorry|apologise|apologize|pardon|excuse|please|thank|thanks|help|let|allow|would|could|can|may|will|shall|should|tissue|napkin|cloth|water|clean|wipe|remake|refund|drink|tea|taro|sugar|ice|half|less|free|voucher|coupon|pearl|fashion|milan|hoodie|stain|manager|dog|puppy|milo|scarf|tail|collar|fluffy|which|that|who|where|saw|seen|sitting|smelling|waiting|bakery|bun|shop|bookshop|walk|go|straight|along|past|across|turn|left|right|road|street|crossing|slowly|softly|quietly|calmly|gently|call|treat|circus|cat|if|unless|play|game|stop|close|finish|fail|slide|script|note|photo|history|ferry|tram|topic|focus|why|how|about|while|practise|practice|together|rehearse|esports|match|when|was|were|shopping|visiting|walking|packing|carrying|tokyo|kyoto|japan|bought|sold|got|box|music|wound|buzzing|wood|treated|certified|checked|inspected|safe|duty|certificate|receipt|attached|inside|gift|mum|mother|family|ninja|shinobi|yes|no|okay|alright)/i;
-
-  if (knownVocab.test(t)) return false;
-
-  // If no known conversational or task words appear at all, treat as incomprehensible
-  return true;
+  // Any real English word or creative sentence is valid and should NEVER be blocked here!
+  return false;
 }
 
-/* Comprehensive Offline Heuristic Router for All 4 Episodes + Universal Pardon Scene */
+// Generates a lively, character-specific spontaneous comeback when running in Offline Mode
+// and the student says something creative, conversational, or off-script
+function buildSpontaneousOfflineReply(transcript, node) {
+  const raw = String(transcript || "").trim();
+  const t = raw.toLowerCase();
+  const isQuestion = raw.includes("?") || /^(what|why|how|where|when|who|can you|do you|are you|is it)\b/i.test(t);
+  const shortQuote = raw.length > 48 ? raw.slice(0, 45) + "…" : raw;
+
+  if (currentEpisodeKey === "ep1_boba") {
+    if (isQuestion) {
+      return {
+        reaction: `"${shortQuote}"?! Look at my purple-stained hoodie first! Are you going to apologise and help me clean this up or not?!`,
+        tip: `Fun question! Now answer Ken using the target pattern: "${node.targetGrammar?.patterns?.[0] || "I'm so sorry! Let me get some tissues."}"`
+      };
+    }
+    return {
+      reaction: `Hold on—you're saying "${shortQuote}" while purple taro milk tea is dripping down my hoodie?! Tell me properly how you're going to fix this!`,
+      tip: `Nice improv! To advance the story, weave in the target grammar: "${node.targetGrammar?.patterns?.[0] || "I'm so sorry! Let me get some tissues."}"`
+    };
+  }
+
+  if (currentEpisodeKey === "ep2_puppy") {
+    if (isQuestion) {
+      return {
+        reaction: `You're asking "${shortQuote}"? I'm so worried about little Milo! Can you tell me clearly what you saw on the street?`,
+        tip: `Good question! Now help Chloe using the target pattern: "${node.targetGrammar?.patterns?.[0] || "I saw a puppy which has a blue scarf."}"`
+      };
+    }
+    return {
+      reaction: `"${shortQuote}"? Oh dear, every second counts if we want to find Milo before the rain gets heavier! Give me a clear clue!`,
+      tip: `Creative reply! Now guide Chloe using: "${node.targetGrammar?.patterns?.[0] || "I saw a puppy which has a blue scarf."}"`
+    };
+  }
+
+  if (currentEpisodeKey === "ep3_project") {
+    if (isQuestion) {
+      return {
+        reaction: `Haha, "${shortQuote}"? Come on, I'm in the middle of a boss fight! Give me one good reason why we need to work on our History project right now!`,
+        tip: `Nice banter! Convince Leo using the target pattern: "${node.targetGrammar?.patterns?.[0] || "If you stop playing now, we will finish early."}"`
+      };
+    }
+    return {
+      reaction: `"${shortQuote}"? Bro, that still doesn't tell me what our plan is for tomorrow's presentation! What's your actual proposal?`,
+      tip: `Good try! Nudge Leo forward using: "${node.targetGrammar?.patterns?.[0] || "If you stop playing now, we will finish early."}"`
+    };
+  }
+
+  if (currentEpisodeKey === "ep4_customs") {
+    if (isQuestion) {
+      return {
+        reaction: `"${shortQuote}"? In Hong Kong Customs, I ask the questions! Now answer my inspection question clearly regarding this wooden box.`,
+        tip: `Bold move! Answer Officer Vance using: "${node.targetGrammar?.patterns?.[0] || "While I was shopping in Tokyo, I bought this box."}"`
+      };
+    }
+    return {
+      reaction: `"${shortQuote}" is not an official customs declaration! Please state the facts about this souvenir box clearly for my report.`,
+      tip: `Stay cool under pressure! Use the target structure: "${node.targetGrammar?.patterns?.[0] || "While I was shopping in Tokyo, I bought this box."}"`
+    };
+  }
+
+  return {
+    reaction: `"${shortQuote}"? That's an interesting thing to say, but we still need to sort out this situation! What do you suggest?`,
+    tip: `Try using one of the target patterns on the right to move to the next scene.`
+  };
+}
+
 function mockRoute(transcript, node) {
   const t = String(transcript || "").toLowerCase().trim();
-  const isRude = /(shut up|stupid|idiot|your fault|not my problem|whatever|who cares|no way|go away)/.test(t);
+  const isRude = /\b(shut up|stupid|idiot|your fault|not my problem|whatever|who cares|no way|go away)\b/.test(t);
 
   if (!isRude && isIncomprehensibleInput(t, node)) {
     return {
@@ -3051,9 +3078,9 @@ function mockRoute(transcript, node) {
 
   /* --- EPISODE 1: THE BUBBLE TEA DISASTER (4 STEPS) --- */
   if (currentEpisodeKey === "ep1_boba") {
-    const isMeme = /(fashion|milan|streetwear|runway|designer|tie[ -]?dye|trendy|art|model)/.test(t);
-    const hasApologyOrModal = /(sorry|apologise|apologize|allow me|let me|would you|could i|can i|may i)/.test(t);
-    const hasHelpOffer = /(tissue|napkin|wipe|clean|cloth|water|soda|remake|replace|refund|help|new|fix)/.test(t);
+    const isMeme = /\b(fashion|milan|streetwear|runway|designer|tie[ -]?dye|trendy|art|model)\b/.test(t);
+    const hasApologyOrModal = /\b(sorry|apologise|apologize|allow me|let me|would you|could i|can i|may i)\b/.test(t);
+    const hasHelpOffer = /\b(tissue|napkin|wipe|clean|cloth|water|soda|remake|replace|refund|help|new|fix)\b/.test(t);
 
     if (currentNodeKey === "node_start") {
       if (isRude) {
@@ -3102,7 +3129,7 @@ function mockRoute(transcript, node) {
         score = 3;
         reaction = "Limited-edition Milan tie-dye?! Let me check the mirror!";
         tip = "Secret ending unlocked!";
-      } else if ((hasApologyOrModal || /(here|take|have)/.test(t)) && hasHelpOffer && !isRude) {
+      } else if ((hasApologyOrModal || /\b(here|take|have)\b/.test(t)) && hasHelpOffer && !isRude) {
         chosen = "node_remake";
         usedGrammar = true;
         score = Math.max(4, score);
@@ -3116,8 +3143,8 @@ function mockRoute(transcript, node) {
         tip = "Try: 'Would you like a wet cloth for your hoodie?'";
       }
     } else if (currentNodeKey === "node_remake") {
-      const hasHalfSugar = /(half sugar|50% sugar|50 percent sugar|half the sugar)/.test(t);
-      const hasLessIce = /(less ice|little ice|light ice|no ice)/.test(t);
+      const hasHalfSugar = /\b(half sugar|50% sugar|50 percent sugar|half the sugar)\b/.test(t);
+      const hasLessIce = /\b(less ice|little ice|light ice|no ice)\b/.test(t);
       if (hasHalfSugar && hasLessIce) {
         chosen = "node_voucher";
         usedGrammar = true;
@@ -3132,7 +3159,7 @@ function mockRoute(transcript, node) {
         tip = "Say BOTH quantifiers: 'One taro milk tea with half sugar and less ice.'";
       }
     } else if (currentNodeKey === "node_voucher") {
-      const hasGoodwill = /(free|voucher|coupon|pearl|topping|please take|allow me|here is|enjoy|discount)/.test(t);
+      const hasGoodwill = /\b(free|voucher|coupon|pearl|topping|please take|allow me|here is|enjoy|discount)\b/.test(t);
       if (hasGoodwill && !isRude) {
         chosen = "ending_golden";
         usedGrammar = true;
@@ -3151,9 +3178,9 @@ function mockRoute(transcript, node) {
 
   /* --- EPISODE 2: THE LOST PUPPY ON THE STREET (4 STEPS) --- */
   else if (currentEpisodeKey === "ep2_puppy") {
-    const isMeme = /(circus|clown|acrobat|backflip|unicycle|juggling|magic show|carnival)/.test(t);
-    const hasRelClause = /(which|that|who)/.test(t);
-    const hasDogFeature = /(fluffy|tail|scarf|collar|golden|blue|puppy|dog)/.test(t);
+    const isMeme = /\b(circus|clown|acrobat|backflip|unicycle|juggling|magic show|carnival)\b/.test(t);
+    const hasRelClause = /\b(which|that|who)\b/.test(t);
+    const hasDogFeature = /\b(fluffy|tail|scarf|collar|golden|blue|puppy|dog)\b/.test(t);
 
     if (currentNodeKey === "node_start") {
       if (isRude) {
@@ -3196,7 +3223,7 @@ function mockRoute(transcript, node) {
         tip = "Practise saying: 'It is the puppy which has a blue scarf.'";
       }
     } else if (currentNodeKey === "node_clue") {
-      const hasActionOrBakery = /(sitting|smelling|waiting|eating|barking|outside|near|by|bakery|bun|shop)/.test(t);
+      const hasActionOrBakery = /\b(sitting|smelling|waiting|eating|barking|outside|near|by|bakery|bun|shop)\b/.test(t);
       if (hasActionOrBakery && !isRude) {
         chosen = "node_directions";
         usedGrammar = true;
@@ -3211,8 +3238,8 @@ function mockRoute(transcript, node) {
         tip = "Try: 'He was sitting outside the bakery.'";
       }
     } else if (currentNodeKey === "node_directions") {
-      const hasMovementPrep = /(along|past|across|towards|through|straight)/.test(t);
-      const hasTurnOrPlace = /(turn left|turn right|corner|bakery|bookshop|crossing|street|road)/.test(t);
+      const hasMovementPrep = /\b(along|past|across|towards|through|straight)\b/.test(t);
+      const hasTurnOrPlace = /\b(turn left|turn right|corner|bakery|bookshop|crossing|street|road)\b/.test(t);
       if (isMeme) {
         chosen = "ending_circus_meme";
         usedGrammar = hasMovementPrep;
@@ -3233,7 +3260,7 @@ function mockRoute(transcript, node) {
         tip = "Try: 'Walk straight along the road and turn left.'";
       }
     } else if (currentNodeKey === "node_reunion") {
-      const hasCalmAdvice = /(slowly|softly|quietly|calmly|gently|carefully|call|walk|kneel|treat)/.test(t);
+      const hasCalmAdvice = /\b(slowly|softly|quietly|calmly|gently|carefully|call|walk|kneel|treat)\b/.test(t);
       if (hasCalmAdvice && !isRude) {
         chosen = "ending_milo_rescued";
         usedGrammar = true;
@@ -3252,9 +3279,9 @@ function mockRoute(transcript, node) {
 
   /* --- EPISODE 3: THE PROJECT FREE-RIDER (4 STEPS) --- */
   else if (currentEpisodeKey === "ep3_project") {
-    const isMeme = /(1v1|esports|ranked match|fight me|beat you|join your squad|pro gamer)/.test(t);
-    const isDoormat = /(i'll do everything|i will do all|i can do it all|you can keep playing)/.test(t);
-    const hasConditional = /(if|unless)/.test(t);
+    const isMeme = /\b(1v1|esports|ranked match|fight me|beat you|join your squad|pro gamer)\b/.test(t);
+    const isDoormat = /\b(i'll do everything|i will do all|i can do it all|you can keep playing)\b/.test(t);
+    const hasConditional = /\b(if|unless)\b/.test(t);
 
     if (currentNodeKey === "node_start") {
       if (isMeme) {
@@ -3297,7 +3324,7 @@ function mockRoute(transcript, node) {
         tip = "Use 'If you close the game, I will write the notes.'";
       }
     } else if (currentNodeKey === "node_topic") {
-      const hasTopicSuggestion = /(how about|why don't|let's|shall we|focus|talk about|choose|star ferry|tram|history|transport|harbour)/.test(t);
+      const hasTopicSuggestion = /\b(how about|why don't|let's|shall we|focus|talk about|choose|star ferry|tram|history|transport|harbour)\b/.test(t);
       if (hasTopicSuggestion && !isRude) {
         chosen = "node_delegate";
         usedGrammar = true;
@@ -3312,8 +3339,8 @@ function mockRoute(transcript, node) {
         tip = "Try: 'How about we talk about the Star Ferry?'";
       }
     } else if (currentNodeKey === "node_delegate") {
-      const hasSuggestion = /(why don't you|how about|what about|shall we|you could|let's|while i)/.test(t);
-      const hasTask = /(slides|script|photos|notes|research|timeline)/.test(t);
+      const hasSuggestion = /\b(why don't you|how about|what about|shall we|you could|let's|while i)\b/.test(t);
+      const hasTask = /\b(slides|script|photos|notes|research|timeline)\b/.test(t);
       if (isRude) {
         chosen = "ending_disqualified";
         usedGrammar = false;
@@ -3334,7 +3361,7 @@ function mockRoute(transcript, node) {
         tip = "Try: 'Why don't you make the slides while I write the script?'";
       }
     } else if (currentNodeKey === "node_rehearse") {
-      const hasRehearse = /(let's|shall we|how about|practise|practice|rehearse|together|now|run|eight|tonight|yes|sure)/.test(t);
+      const hasRehearse = /\b(let's|shall we|how about|practise|practice|rehearse|together|now|run|eight|tonight|yes|sure)\b/.test(t);
       if (hasRehearse && !isRude) {
         chosen = "ending_teamwork_gold";
         usedGrammar = true;
@@ -3353,9 +3380,9 @@ function mockRoute(transcript, node) {
 
   /* --- EPISODE 4: THE STRICT AIRPORT CUSTOMS OFFICER (4 STEPS) --- */
   else if (currentEpisodeKey === "ep4_customs") {
-    const isMeme = /(ninja|shinobi|secret scroll|hidden leaf|hokage|spy gadget|jutsu)/.test(t);
-    const hasPastCont = /(while|when|as)/.test(t) && /(was|were)\s+\w+ing/.test(t);
-    const hasPastSimple = /(bought|sold|gave|found|got|purchased|wound|pressed|started)/.test(t);
+    const isMeme = /\b(ninja|shinobi|secret scroll|hidden leaf|hokage|spy gadget|jutsu)\b/.test(t);
+    const hasPastCont = /\b(while|when|as)\b/.test(t) && /\b(was|were)\s+\w+ing\b/.test(t);
+    const hasPastSimple = /\b(bought|sold|gave|found|got|purchased|wound|pressed|started)\b/.test(t);
 
     if (currentNodeKey === "node_start") {
       if (isRude) {
@@ -3398,7 +3425,7 @@ function mockRoute(transcript, node) {
         tip = "Try: 'While I was visiting a market, I bought this box.'";
       }
     } else if (currentNodeKey === "node_open_box") {
-      const hasBoxReason = /(packing|carrying|music box|wound|wind|playing|pressed|button|spring|song)/.test(t);
+      const hasBoxReason = /\b(packing|carrying|music box|wound|wind|playing|pressed|button|spring|song)\b/.test(t);
       if (hasBoxReason && !isRude) {
         chosen = "node_inspect_wood";
         usedGrammar = true;
@@ -3413,8 +3440,8 @@ function mockRoute(transcript, node) {
         tip = "Try: 'While I was packing my bag, I wound the music box.'";
       }
     } else if (currentNodeKey === "node_inspect_wood") {
-      const hasPassive = /(was|were|is|are|been)\s+(treated|certified|checked|inspected|bought|purchased|made|sealed|approved)/.test(t);
-      const hasSafety = /(treated|certified|checked|safe|duty[ -]?free|inspected|japan)/.test(t);
+      const hasPassive = /\b(was|were|is|are|been)\s+(treated|certified|checked|inspected|bought|purchased|made|sealed|approved)\b/.test(t);
+      const hasSafety = /\b(treated|certified|checked|safe|duty[ -]?free|inspected|japan)\b/.test(t);
       if (isMeme) {
         chosen = "ending_ninja_meme";
         usedGrammar = hasPassive;
@@ -3435,7 +3462,7 @@ function mockRoute(transcript, node) {
         tip = "Try: 'The wood was treated and checked in Japan.'";
       }
     } else if (currentNodeKey === "node_declare") {
-      const hasCertOrGift = /(attached|inside|wrapped|bought|certificate|receipt|box|gift|souvenir|mum|mother|family|birthday)/.test(t);
+      const hasCertOrGift = /\b(attached|inside|wrapped|bought|certificate|receipt|box|gift|souvenir|mum|mother|family|birthday)\b/.test(t);
       if (hasCertOrGift && !isRude) {
         chosen = "ending_welcome_home";
         usedGrammar = true;
@@ -3471,6 +3498,21 @@ function mockRoute(transcript, node) {
 
   if (!usedGrammar && chosen !== "node_pardon") {
     chosen = preferNonGolden(node, chosen);
+    // Option A (Spontaneous In-Character Improv): If the student wasn't rude and didn't trigger a meme ending,
+    // let them have a spontaneous in-character exchange on the current scene on their first off-script comment!
+    const chosenNodeObj = currentEpisode?.nodes?.[chosen];
+    const isMemeChoice = chosenNodeObj?.endingType === "meme";
+    if (!isRude && !isMemeChoice && currentNodeImprovCount < 1) {
+      currentNodeImprovCount += 1;
+      const spont = buildSpontaneousOfflineReply(transcript, node);
+      return {
+        chosen_target_node: currentNodeKey,
+        used_target_grammar: false,
+        grammar_score: 2,
+        character_reaction: spont.reaction,
+        teacher_tip: spont.tip
+      };
+    }
   }
 
   return {
@@ -3485,8 +3527,9 @@ function mockRoute(transcript, node) {
 function buildDeepSeekSystemPrompt(node, transcript) {
   return `You are the AI Game Master and ESL Speaking Coach for "Say It Louder!", an interactive anime visual novel for Hong Kong secondary school students. Always use British English spelling and vocabulary (e.g. apologise, practise, colour, mum, pedestrian crossing, lead).
 
+Current Node ID: "${currentNodeKey}"
 Current Scene Speaker: "${node.speaker}"
-Character's Line: "${node.defaultLine}"
+Character's Current Line: "${node.defaultLine}"
 Student's Mission Goal: "${node.goalHint}"
 
 Active Node Target Grammar:
@@ -3497,19 +3540,23 @@ ${JSON.stringify(node.branches || [], null, 2)}
 
 Student said: "${transcript}"
 
-STRICT ROUTING & PEDAGOGICAL RULES:
-1. Short, simple spoken sentences are encouraged! If the student communicates the idea clearly using the target grammar pattern or keywords (even in a short 5-8 word sentence), reward them with "used_target_grammar": true and route to the success/golden branch.
-2. INCOMPREHENSIBLE INPUT RULE (ALL EPISODES): If the student's input is gibberish, random noise, unintelligible, or completely unrelated to the scene, set "chosen_target_node": "node_pardon", "used_target_grammar": false, "grammar_score": 1, and set "character_reaction" to: "Excuse me? I don't understand what you mean. Could you please say that again more clearly?"
-3. If the student's answer is understandable but ignores the required grammar pattern, set "used_target_grammar": false and route them to the retry/clarification or fail/chaos node (never Golden).
-4. Write a short, natural 1-sentence "character_reaction" in British English reacting directly to what the student said.
-5. Write a short, encouraging 1-sentence "teacher_tip" in British English.
+ROUTING & SPONTANEOUS IMPROVISATION RULES (OPTION A):
+1. POSITIVE BRANCH (TARGET GRAMMAR USED): Short, simple spoken sentences are encouraged! If the student communicates the mission goal clearly using the target grammar pattern or keywords (even in a short 5-10 word sentence), set "used_target_grammar": true, "grammar_score": 4 or 5, and set "chosen_target_node" to the positive/success branch targetNode.
+2. SPONTANEOUS IN-CHARACTER IMPROVISATION (UNPLANNED / OFF-SCRIPT / CREATIVE ANSWERS):
+   - NEVER output a canned "Excuse me, I don't understand what you mean" message for unplanned, funny, creative, or tangential English!
+   - If the student asks an unexpected question, makes a joke, offers something off-script, or chats with the character without completing the target grammar yet:
+     * If it matches a silly/meme branch in Available Branches, route to that meme targetNode.
+     * Otherwise, set "chosen_target_node": "${currentNodeKey}" (staying on the current scene!) and write a lively, witty, 100% spontaneous 1-2 sentence "character_reaction" in character as ${node.speaker} that reacts directly to the exact words the student said, then naturally steers them back toward the mission goal ("${node.goalHint}")!
+3. UNDERSTANDABLE ATTEMPT WITHOUT TARGET GRAMMAR: If the student tries to answer the prompt directly (or is rude) without using the target grammar, set "used_target_grammar": false and either keep them on "${currentNodeKey}" with a spontaneous in-character nudge OR route to the retry/clarification/fail branch (never Golden).
+4. TRUE GIBBERISH ONLY: Only if the input is completely unintelligible keyboard mashing with zero recognisable English meaning, set "chosen_target_node": "${currentNodeKey}", "used_target_grammar": false, "grammar_score": 1, and write a fresh, in-character puzzled reaction as ${node.speaker}.
+5. Write a short, encouraging 1-sentence "teacher_tip" in British English that acknowledges what the student said and shows how to use the target grammar pattern.
 
 Respond ONLY in valid JSON matching this exact schema:
 {
-  "chosen_target_node": "exact_targetNode_id_from_branches_or_node_pardon",
+  "chosen_target_node": "branch_targetNode_or_${currentNodeKey}",
   "used_target_grammar": true,
   "grammar_score": 5,
-  "character_reaction": "Short in-character reply in British English",
+  "character_reaction": "Spontaneous, natural in-character reply in British English reacting directly to what the student said",
   "teacher_tip": "Short, encouraging feedback in British English"
 }`;
 }
@@ -3518,21 +3565,21 @@ function applyEvaluationResult(node, out) {
   if (!out || out.chosen_target_node === "node_pardon" || out.incomprehensible) {
     playFailBuzzer();
     triggerPardonScene(
-      out?.character_reaction || STANDARD_PARDON_SCENE.defaultLine,
+      out?.character_reaction || buildSpontaneousOfflineReply("", node).reaction,
       out?.teacher_tip || STANDARD_PARDON_SCENE.teacherTip
     );
     return;
   }
 
   let chosen = out.chosen_target_node;
-  if (!currentEpisode.nodes[chosen]) {
-    chosen = node.branches?.[0]?.targetNode || currentNodeKey;
+  if (chosen !== currentNodeKey && !currentEpisode.nodes[chosen]) {
+    chosen = currentNodeKey;
   }
   const used = Boolean(out.used_target_grammar);
   const score = Math.max(1, Math.min(5, Number(out.grammar_score) || (used ? 4 : 2)));
 
   // Enforce hard routing rule: never allow golden/success path without target grammar
-  if (!used) {
+  if (!used && chosen !== currentNodeKey) {
     chosen = preferNonGolden(node, chosen);
   }
 
@@ -3541,21 +3588,33 @@ function applyEvaluationResult(node, out) {
   }
 
   const scorePill = document.getElementById("scorePill");
-  scorePill.textContent = `Grammar ${score}/5 ${used ? "✓" : "↺"}`;
-  scorePill.className = `score-pill ${used ? "good" : "warn"}`;
+  if (chosen === currentNodeKey && !used) {
+    scorePill.textContent = `Live Improv · Try Pattern ↺`;
+    scorePill.className = "score-pill warn";
+  } else {
+    scorePill.textContent = `Grammar ${score}/5 ${used ? "✓" : "↺"}`;
+    scorePill.className = `score-pill ${used ? "good" : "warn"}`;
+  }
 
   document.getElementById("teacherTip").textContent =
     out.teacher_tip || "Keep practising the short sentence patterns above.";
 
-  const nextNode = currentEpisode.nodes[chosen];
-  let combinedLine = null;
-  if (out.character_reaction && nextNode && !nextNode.isEnding) {
-    combinedLine = `${out.character_reaction} ${nextNode.defaultLine}`;
-  } else if (out.character_reaction && nextNode && nextNode.isEnding) {
-    combinedLine = `${out.character_reaction} ${nextNode.defaultLine}`;
+  // When staying on the current scene for a spontaneous in-character exchange,
+  // speak ONLY the character's live reaction so it feels like a real conversation!
+  if (chosen === currentNodeKey) {
+    const liveReply = out.character_reaction || buildSpontaneousOfflineReply("", node).reaction;
+    document.getElementById("speakerName").textContent = node.speaker;
+    setDialogueWithTypewriter(liveReply);
+    document.getElementById("situationPrompt").textContent = node.goalHint || "";
+    speakCharacterLine(liveReply);
+  } else {
+    const nextNode = currentEpisode.nodes[chosen];
+    let combinedLine = null;
+    if (out.character_reaction && nextNode) {
+      combinedLine = `${out.character_reaction} ${nextNode.defaultLine}`;
+    }
+    goToNode(chosen, combinedLine, out.custom_anime_prompt || null);
   }
-
-  goToNode(chosen, combinedLine, out.custom_anime_prompt || null);
 
   if (document.getElementById("autoReadCoachTip")?.checked && out.teacher_tip) {
     setTimeout(() => {
