@@ -568,29 +568,97 @@
       color: var(--navy);
     }
 
-    /* Voice & Input Card */
+    /* Voice & Input Card
+       Idle Tap & Speak and Say It use the Eng subject-site .api-mesh wash
+       (ASK / EXPLAIN / SEND): blue → violet → magenta → orange → yellow.
+       Copied here so this page does not load ask.css. Labels stay as written. */
     .mic-btn {
       width: 100%;
       padding: 0.78rem 1rem;
       font-size: 0.95rem;
       border-radius: 10px;
-      background: var(--accent-deep);
-      border-color: var(--accent-deep);
-      color: #ffffff;
-      box-shadow: 0 3px 10px rgba(42, 143, 173, 0.22);
     }
 
-    .mic-btn.listening {
-      background: var(--ok);
-      border-color: var(--ok);
-      color: #ffffff;
-      animation: pulseMic 1.3s infinite;
+    #micBtn,
+    #sendBtn {
+      --api-mesh-ink: #f4f0e8;
+      background-color: #1458d6;
+      background-image: linear-gradient(
+        122deg,
+        #1458d6 0%,
+        #3a3ad0 24%,
+        #c42670 50%,
+        #be3a16 76%,
+        #7c6906 100%
+      );
+      background-repeat: no-repeat;
+      background-size: 300% 300%;
+      background-position: 0% 40%;
+      animation: api-mesh-wash 10s ease-in-out infinite;
+      color: var(--api-mesh-ink);
+      border-color: transparent;
+      text-transform: none;
+      box-shadow: 0 3px 10px rgba(18, 58, 77, 0.18);
     }
 
-    @keyframes pulseMic {
-      0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); }
-      70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+    #micBtn:hover:not(:disabled):not(.listening),
+    #sendBtn:hover:not(:disabled) {
+      background-color: #1458d6;
+      border-color: transparent;
+      color: #f4f0e8;
+      filter: brightness(1.06);
+    }
+
+    @keyframes api-mesh-wash {
+      0% { background-position: 0% 40%; }
+      50% { background-position: 100% 60%; }
+      100% { background-position: 0% 40%; }
+    }
+
+    /* Live mic only: solid site teal, plus a soft brightness fade and glow ring.
+       Say It keeps the mesh. Reduced motion drops the pulse and stays solid teal. */
+    #micBtn.listening {
+      background-color: #2a8fad;
+      background-image: none;
+      border-color: #2a8fad;
+      color: #f4f0e8;
+      filter: none;
+      animation: mic-listen-pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes mic-listen-pulse {
+      0%, 100% {
+        background-color: #2a8fad;
+        box-shadow: 0 0 0 0 rgba(42, 143, 173, 0.55);
+        filter: brightness(0.92);
+      }
+      50% {
+        background-color: #2a8fad;
+        box-shadow:
+          0 0 0 8px rgba(42, 143, 173, 0.42),
+          0 0 26px 8px rgba(91, 186, 213, 0.9);
+        filter: brightness(1.18);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #micBtn,
+      #sendBtn {
+        animation: none;
+        background-size: 100% 100%;
+        background-position: 50% 50%;
+      }
+
+      #micBtn.listening {
+        animation: none;
+        transition: none;
+        filter: none;
+        background-color: #2a8fad;
+        background-image: none;
+        border-color: #2a8fad;
+        color: #f4f0e8;
+        box-shadow: none;
+      }
     }
 
     .input-row {
