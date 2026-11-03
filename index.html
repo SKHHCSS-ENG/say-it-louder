@@ -757,6 +757,74 @@
       display: block;
     }
 
+    .episode-grammar-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--accent-soft);
+      border: 1px solid var(--border-strong);
+      color: var(--accent-ink);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 0.24rem 0.62rem;
+      border-radius: 999px;
+      line-height: 1.25;
+    }
+
+    .episode-table-wrap {
+      margin-top: 0.45rem;
+      overflow-x: auto;
+    }
+
+    .episode-grammar-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+
+    .episode-grammar-table th {
+      background: var(--panel-alt);
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 0.42rem 0.6rem;
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    .episode-grammar-table td {
+      padding: 0.45rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .episode-grammar-table tr.ep-row {
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    .episode-grammar-table tr.ep-row:hover {
+      background: var(--accent-soft);
+    }
+
+    .episode-grammar-table tr.ep-row.active {
+      background: var(--accent-soft);
+      font-weight: 700;
+    }
+
+    .ep-col-title {
+      font-weight: 700;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+
+    .ep-col-grammar {
+      color: var(--accent-ink);
+      font-weight: 600;
+    }
+
     .endings-grid {
       display: flex;
       flex-wrap: wrap;
@@ -814,6 +882,7 @@
     </div>
 
     <select id="episodeSelect" aria-label="Select Episode" onchange="changeEpisode()"></select>
+    <button type="button" class="ghost" id="episodeMapBtn" onclick="toggleEpisodeMapDrawer()" title="View all episodes and grammar items">📋 Episodes &amp; Grammar</button>
 
     <div class="top-actions">
       <button type="button" class="ghost" id="restartBtn" onclick="restartStory()">🔄 Restart</button>
@@ -848,6 +917,25 @@
         <div class="vn-situation" id="situationPrompt"></div>
       </div>
 
+      <!-- 2-Column Episode & Grammar Overview Table (toggled by clicking 📋 Episodes & Grammar) -->
+      <div class="endings-drawer" id="episodeMapDrawer">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-size:0.82rem; color:var(--navy);">📋 All Episodes &amp; Grammar Items</strong>
+          <button type="button" class="ghost mini-btn" onclick="toggleEpisodeMapDrawer()">Close</button>
+        </div>
+        <div class="episode-table-wrap">
+          <table class="episode-grammar-table" aria-label="Episodes and Grammar Items">
+            <thead>
+              <tr>
+                <th>Episode</th>
+                <th>Grammar Items</th>
+              </tr>
+            </thead>
+            <tbody id="episodeGrammarTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Compact Episode Endings Tray (toggled by clicking the 🏆 chip) -->
       <div class="endings-drawer" id="endingsDrawer">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -862,8 +950,9 @@
     <aside class="sidebar">
       <!-- Target Grammar Mission HUD -->
       <div class="card grammar-card" id="grammarCard">
-        <div class="card-header">
+        <div class="card-header" style="flex-wrap:wrap; gap:0.35rem;">
           <h2 class="card-title" id="grammarCardTitle">🎯 Target Grammar</h2>
+          <span class="episode-grammar-pill" id="episodeGrammarPill">Polite Offers · Quantifiers</span>
         </div>
         <div id="grammarMissionBody">
           <div class="grammar-item" id="grammarItem"></div>
@@ -1217,6 +1306,7 @@ const EPISODES = {
     title: "Episode 1: The Bubble Tea Disaster (All Forms)",
     shortTitle: "Ep 1: Bubble Tea Disaster",
     themeIcon: "🧋",
+    grammarSummary: "Polite Offers · Quantifiers",
     startNode: "node_start",
     nodes: {
       node_start: {
@@ -1476,6 +1566,7 @@ const EPISODES = {
     title: "Episode 2: The Lost Puppy on the Street (S1–S3)",
     shortTitle: "Ep 2: The Lost Puppy",
     themeIcon: "🐶",
+    grammarSummary: "Relative Clauses · Past Continuous · Prepositions · Adverbs",
     startNode: "node_start",
     nodes: {
       node_start: {
@@ -1715,6 +1806,7 @@ const EPISODES = {
     title: "Episode 3: The Project Free-Rider (S2–S4)",
     shortTitle: "Ep 3: Project Free-Rider",
     themeIcon: "🎮",
+    grammarSummary: "Type 1 Conditionals · Making Suggestions",
     startNode: "node_start",
     nodes: {
       node_start: {
@@ -1960,6 +2052,7 @@ const EPISODES = {
     title: "Episode 4: The Strict Airport Customs Officer (S4–S6)",
     shortTitle: "Ep 4: Airport Customs Officer",
     themeIcon: "🛃",
+    grammarSummary: "Past Continuous · Passive Voice",
     startNode: "node_start",
     nodes: {
       node_start: {
@@ -2199,6 +2292,7 @@ const EPISODES = {
     title: "Episode 5: The Custom Sub Rush (All Forms)",
     shortTitle: "Ep 5: Custom Sub Rush",
     themeIcon: "🥪",
+    grammarSummary: "Polite Ordering · Prepositions · Quantifiers",
     startNode: "node_start",
     nodes: {
       node_start: {
@@ -2444,6 +2538,7 @@ const EPISODES = {
     title: "Episode 6: The MTR Time-Portal Dragon (All Forms)",
     shortTitle: "Ep 6: MTR Portal Dragon",
     themeIcon: "🐉",
+    grammarSummary: "Modals (Can / Should) · Connectives · Sequencing",
     startNode: "node_start",
     nodes: {
       node_start: {
@@ -2862,6 +2957,37 @@ function toggleTeacherPanel() {
 function toggleEndingsDrawer() {
   const drawer = document.getElementById("endingsDrawer");
   drawer.classList.toggle("open");
+}
+
+function toggleEpisodeMapDrawer() {
+  const drawer = document.getElementById("episodeMapDrawer");
+  if (!drawer) return;
+  const isOpen = drawer.classList.toggle("open");
+  const btn = document.getElementById("episodeMapBtn");
+  if (btn) btn.classList.toggle("active", isOpen);
+}
+
+function selectEpisodeFromTable(epKey) {
+  const select = document.getElementById("episodeSelect");
+  if (select) select.value = epKey;
+  changeEpisode();
+  const drawer = document.getElementById("episodeMapDrawer");
+  if (drawer) drawer.classList.remove("open");
+  const btn = document.getElementById("episodeMapBtn");
+  if (btn) btn.classList.remove("active");
+}
+
+function renderEpisodeGrammarTable() {
+  const tbody = document.getElementById("episodeGrammarTableBody");
+  if (!tbody) return;
+  tbody.innerHTML = Object.keys(EPISODES).map(key => {
+    const ep = EPISODES[key];
+    const isActive = key === currentEpisodeKey;
+    return `<tr class="ep-row${isActive ? " active" : ""}" onclick="selectEpisodeFromTable('${key}')">
+      <td class="ep-col-title">${escapeHtml(ep.themeIcon || "")} ${escapeHtml(ep.shortTitle || ep.title)}</td>
+      <td class="ep-col-grammar">${escapeHtml(ep.grammarSummary || "")}</td>
+    </tr>`;
+  }).join("");
 }
 
 /* ============================================================================
@@ -3327,6 +3453,11 @@ function triggerPardonScene(customReaction = null, customTip = null) {
   document.getElementById("situationPrompt").textContent =
     activeNode.goalHint || STANDARD_PARDON_SCENE.goalHint;
 
+  accumulatedFinalSpeech = "";
+  currentSessionSpeech = "";
+  const pardonInputEl = document.getElementById("textInput");
+  if (pardonInputEl) pardonInputEl.value = "";
+
   refreshSceneImage(null, activeNode);
   renderGrammarCard(activeNode);
   speakCharacterLine(lineToSpeak);
@@ -3430,6 +3561,11 @@ function goToNode(nodeKey, customAiLine = null, customImagePrompt = null) {
   const lineToSpeak = customAiLine || node.defaultLine;
   setDialogueWithTypewriter(lineToSpeak);
   document.getElementById("situationPrompt").textContent = node.goalHint || "";
+
+  accumulatedFinalSpeech = "";
+  currentSessionSpeech = "";
+  const nodeInputEl = document.getElementById("textInput");
+  if (nodeInputEl) nodeInputEl.value = "";
 
   updateEndingBadge(node);
   renderGrammarCard(node);
@@ -4453,6 +4589,10 @@ async function evaluateStudentSpeech(transcript) {
     applyEvaluationResult(node, offlineResult);
   } finally {
     isEvaluating = false;
+    accumulatedFinalSpeech = "";
+  currentSessionSpeech = "";
+    const evalInputEl = document.getElementById("textInput");
+    if (evalInputEl) evalInputEl.value = "";
     document.getElementById("sendBtn").disabled = false;
   }
 }
@@ -4460,7 +4600,52 @@ async function evaluateStudentSpeech(transcript) {
 /* ============================================================================
    9. SPEECH RECOGNITION & MANUAL TEXT FALLBACK
    ============================================================================ */
-let accumulatedFinalSpeech = "";
+var accumulatedFinalSpeech = "";
+var currentSessionSpeech = "";
+var ignoreLateSpeechResults = false;
+
+/**
+ * Merges two speech transcript segments while deduplicating Android/mobile Chrome's
+ * cumulative prefix results (e.g. "don't" -> "don't worry" -> "don't worry I can").
+ */
+function mergeSpeechSegments(existingText, newSegment) {
+  const a = String(existingText || "").replace(/\s+/g, " ").trim();
+  const b = String(newSegment || "").replace(/\s+/g, " ").trim();
+  if (!a) return b;
+  if (!b) return a;
+
+  const norm = (s) => s.toLowerCase().replace(/[^a-z0-9'\s]/g, "").replace(/\s+/g, " ").trim();
+  const aNorm = norm(a);
+  const bNorm = norm(b);
+  if (!aNorm) return b;
+  if (!bNorm) return a;
+
+  // 1. Exact match or newSegment is an older/shorter prefix or suffix echo already inside existingText
+  if (aNorm === bNorm || aNorm.startsWith(bNorm) || aNorm.endsWith(bNorm)) {
+    return a;
+  }
+
+  // 2. Cumulative expansion: newSegment starts with all of existingText (e.g. "don't worry" -> "don't worry I can")
+  if (bNorm.startsWith(aNorm)) {
+    return b;
+  }
+
+  // 3. Word-level suffix/prefix overlap (e.g. "don't worry I" + "I can hide him")
+  const aWords = a.split(" ");
+  const bWords = b.split(" ");
+  const aNormWords = aNorm.split(" ");
+  const bNormWords = bNorm.split(" ");
+  const maxOverlap = Math.min(aNormWords.length, bNormWords.length);
+  for (let k = maxOverlap; k >= 1; k--) {
+    const aSuffix = aNormWords.slice(aNormWords.length - k).join(" ");
+    const bPrefix = bNormWords.slice(0, k).join(" ");
+    if (aSuffix === bPrefix) {
+      return aWords.concat(bWords.slice(k)).join(" ");
+    }
+  }
+
+  return `${a} ${b}`;
+}
 
 function clearMicTimer() {
   if (micListenTimer) {
@@ -4508,25 +4693,22 @@ function setupVoiceRecognition() {
   recognition.interimResults = true;
 
   recognition.onresult = (event) => {
-    let interim = "";
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const piece = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        accumulatedFinalSpeech = [accumulatedFinalSpeech, piece.trim()]
-          .filter(Boolean)
-          .join(" ")
-          .replace(/\s+/g, " ")
-          .trim();
-      } else {
-        interim += piece;
+    // Ignore late speech callbacks fired asynchronously after the student clicked "Say It!"
+    if (ignoreLateSpeechResults || isEvaluating) {
+      return;
+    }
+    // Rebuild current session transcript fresh from event.results[0..N] so mobile browsers
+    // that fire repeated isFinal events never duplicate earlier phrases.
+    let sessionMerged = "";
+    for (let i = 0; i < event.results.length; i++) {
+      const piece = event.results[i][0]?.transcript || "";
+      if (piece.trim()) {
+        sessionMerged = mergeSpeechSegments(sessionMerged, piece);
       }
     }
-    const combinedText = [accumulatedFinalSpeech, interim.trim()]
-      .filter(Boolean)
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (combinedText) {
+    currentSessionSpeech = sessionMerged;
+    const combinedText = mergeSpeechSegments(accumulatedFinalSpeech, currentSessionSpeech);
+    if (combinedText && !ignoreLateSpeechResults && !isEvaluating) {
       document.getElementById("textInput").value = combinedText;
       document.getElementById("transcriptLog").textContent = `"${combinedText}…"`;
       handleLiveInput(combinedText);
@@ -4543,8 +4725,13 @@ function setupVoiceRecognition() {
   };
 
   recognition.onend = () => {
-    // If the student hasn't tapped to stop yet (and 30s timer hasn't expired), keep listening across pauses
+    // If the student hasn't tapped to stop yet (and 30s timer hasn't expired), preserve what was spoken
+    // in this session and keep listening across pauses.
     if (isListening) {
+      if (currentSessionSpeech) {
+        accumulatedFinalSpeech = mergeSpeechSegments(accumulatedFinalSpeech, currentSessionSpeech);
+        currentSessionSpeech = "";
+      }
       try {
         recognition.start();
       } catch (_) {
@@ -4590,7 +4777,9 @@ function toggleMic() {
   }
 
   // Start from whatever is currently in the input box (or empty string)
+  ignoreLateSpeechResults = false;
   accumulatedFinalSpeech = document.getElementById("textInput").value.trim();
+  currentSessionSpeech = "";
 
   isListening = true;
   const btn = document.getElementById("micBtn");
@@ -4613,18 +4802,21 @@ function toggleMic() {
 
 function submitText() {
   getAudioContext();
-  if (isListening) {
-    isListening = false;
-    try {
-      if (recognition) recognition.stop();
-    } catch (_) {}
-    resetMicUI();
-  }
   const input = document.getElementById("textInput");
   const val = input.value.trim();
+
+  // Immediately block any delayed recognition.onresult callbacks and abort pending audio
+  ignoreLateSpeechResults = true;
+  isListening = false;
+  try {
+    if (recognition) recognition.abort();
+  } catch (_) {}
+  resetMicUI();
+
   if (!val) return;
   input.value = "";
   accumulatedFinalSpeech = "";
+  currentSessionSpeech = "";
   evaluateStudentSpeech(val);
 }
 
@@ -4645,6 +4837,11 @@ function restartStory() {
   currentEpisodeKey = select.value || "ep1_boba";
   currentEpisode = EPISODES[currentEpisodeKey];
   document.getElementById("sceneTitle").textContent = currentEpisode.shortTitle || currentEpisode.title;
+  const epGrammarPill = document.getElementById("episodeGrammarPill");
+  if (epGrammarPill) {
+    epGrammarPill.textContent = currentEpisode.grammarSummary || "";
+  }
+  renderEpisodeGrammarTable();
   document.getElementById("transcriptLog").textContent = "—";
   document.getElementById("textInput").value = "";
   document.getElementById("teacherTip").textContent = "Use the sentence frames and keywords above.";
@@ -4659,9 +4856,10 @@ function restartStory() {
 function initApp() {
   const select = document.getElementById("episodeSelect");
   Object.keys(EPISODES).forEach(key => {
+    const ep = EPISODES[key];
     const opt = document.createElement("option");
     opt.value = key;
-    opt.textContent = EPISODES[key].title;
+    opt.textContent = `${ep.themeIcon} ${ep.shortTitle}  |  ${ep.grammarSummary}`;
     select.appendChild(opt);
   });
 
