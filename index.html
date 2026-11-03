@@ -2490,13 +2490,19 @@ function finishTypewriter() {
 }
 
 let cachedVoices = [];
+let refreshingVoices = false;
 let currentTtsAudio = null;
 const ttsAudioCache = new Map();
 
 function refreshAvailableVoices() {
-  if (!window.speechSynthesis) return;
-  cachedVoices = window.speechSynthesis.getVoices() || [];
-  updateActiveVoiceBadge();
+  if (!window.speechSynthesis || refreshingVoices) return;
+  refreshingVoices = true;
+  try {
+    cachedVoices = window.speechSynthesis.getVoices() || [];
+    updateActiveVoiceBadge();
+  } finally {
+    refreshingVoices = false;
+  }
 }
 if (window.speechSynthesis) {
   refreshAvailableVoices();
@@ -2564,7 +2570,8 @@ function scoreBrowserVoice(v, preferredGender = "male") {
 }
 
 function pickBestNaturalVoice(preferredGender = "male") {
-  if (!cachedVoices.length) refreshAvailableVoices();
+  // Empty getVoices() must not re-enter refresh via the badge, or startup overflows before initApp.
+  if (!cachedVoices.length && !refreshingVoices) refreshAvailableVoices();
   const voices = cachedVoices;
   if (!voices.length) return { voice: null, score: 0 };
 
