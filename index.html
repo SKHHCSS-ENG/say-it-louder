@@ -545,6 +545,299 @@
       color: var(--navy);
     }
 
+    /* Feature 1: "What You Said" Card (Seated Below Partner Dialogue Box) */
+    .student-reply-box {
+      background: #f8fafc;
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius);
+      padding: 0.78rem 1rem;
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .student-reply-box.has-input {
+      background: #ffffff;
+      border: 2px solid var(--accent);
+    }
+
+    .student-reply-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .student-reply-tag {
+      background: var(--accent-deep);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 0.22rem 0.68rem;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    .reply-colour-legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.22rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .legend-dot.step {
+      background: #dcfce7;
+      color: #14532d;
+      border: 1px solid #86efac;
+    }
+
+    .legend-dot.meme {
+      background: #f3e8ff;
+      color: #6b21a8;
+      border: 1px solid #d8b4fe;
+    }
+
+    .legend-dot.chaos {
+      background: #ffedd5;
+      color: #9a3412;
+      border: 1px solid #fdba74;
+    }
+
+    .legend-dot.retry {
+      background: #fef3c7;
+      color: #854d0e;
+      border: 1px solid #fde047;
+    }
+
+    .legend-dot.fail {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .student-reply-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.38rem;
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1.42;
+    }
+
+    .student-reply-list.empty-state {
+      color: var(--muted);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    .reply-line-item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.38rem 0.65rem;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 0.86rem;
+    }
+
+    .reply-line-stay {
+      background: #f1f5f9;
+      border: 1px dashed #cbd5e1;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .reply-line-step {
+      background: #dcfce7;
+      border: 1.5px solid #86efac;
+      color: #14532d;
+    }
+
+    .reply-line-meme {
+      background: #f3e8ff;
+      border: 1.5px solid #d8b4fe;
+      color: #6b21a8;
+    }
+
+    .reply-line-chaos {
+      background: #ffedd5;
+      border: 1.5px solid #fdba74;
+      color: #9a3412;
+    }
+
+    .reply-line-retry {
+      background: #fef3c7;
+      border: 1.5px solid #fde047;
+      color: #854d0e;
+    }
+
+    .reply-line-fail {
+      background: #fee2e2;
+      border: 1.5px solid #fca5a5;
+      color: #991b1b;
+    }
+
+    .reply-branch-pill {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.1rem 0.48rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      white-space: nowrap;
+      margin-left: auto;
+    }
+
+    /* Feature 2: Sentence Pattern ("Play-Safe Builder") Box */
+    .pattern-builder-box {
+      margin-top: 0.48rem;
+      padding: 0.65rem 0.78rem;
+      border-radius: 11px;
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+    }
+
+    .pattern-builder-title {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #b45309;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+
+    .pattern-formula-line {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--navy);
+      background: #ffffff;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      line-height: 1.45;
+    }
+
+    .pat-slot {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent-ink);
+      border: 1px solid var(--border-strong);
+      border-radius: 5px;
+      padding: 0.04rem 0.36rem;
+      font-weight: 800;
+    }
+
+    .pat-slot-alt {
+      display: inline-block;
+      background: #f3e8ff;
+      color: #6b21a8;
+      border: 1px solid #d8b4fe;
+      border-radius: 5px;
+      padding: 0.04rem 0.36rem;
+      font-weight: 800;
+    }
+
+    .pattern-slots-grid {
+      margin-top: 0.42rem;
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      column-gap: 0.5rem;
+      row-gap: 0.25rem;
+      font-size: 0.78rem;
+      color: var(--ink);
+      line-height: 1.38;
+      padding: 0.35rem 0.5rem;
+      background: rgba(255, 255, 255, 0.72);
+      border-radius: 7px;
+    }
+
+    .pattern-slot-label {
+      font-weight: 800;
+      color: var(--accent-ink);
+      white-space: nowrap;
+    }
+
+    .pattern-slot-options {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    /* Feature 3: S-D Grading & Coach Report Card */
+    .report-grade-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      width: 100%;
+      margin-bottom: 0.4rem;
+    }
+
+    .grade-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 900;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(18, 58, 77, 0.12);
+    }
+
+    .grade-S { background: #fef3c7; color: #b45309; border: 3px solid #f59e0b; }
+    .grade-A { background: #dcfce7; color: #15803d; border: 3px solid #22c55e; }
+    .grade-B { background: #e0f2fe; color: #0369a1; border: 3px solid #38bdf8; }
+    .grade-C { background: #f3e8ff; color: #6b21a8; border: 3px solid #c084fc; }
+    .grade-D { background: #fee2e2; color: #b91c1c; border: 3px solid #f87171; }
+
+    .report-comment-card {
+      width: 100%;
+      background: var(--panel-alt);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 0.65rem 0.8rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .report-section-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .report-improvement-box {
+      margin-top: 0.45rem;
+      padding: 0.5rem 0.68rem;
+      border-radius: 8px;
+      background: #dcfce7;
+      border: 1.5px solid #86efac;
+      color: #14532d;
+      font-weight: 700;
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
     /* Voice & Input Card
        Idle Tap & Speak and Say It use the Eng subject-site .api-mesh wash
        (ASK / EXPLAIN / SEND): blue → violet → magenta → orange → yellow.
@@ -944,6 +1237,21 @@
         <div class="vn-situation" id="situationPrompt"></div>
       </div>
 
+      <!-- Feature 1: "What You Said" Box Seated Cleanly Below Dialogue Card -->
+      <div class="student-reply-box" id="studentReplyBox">
+        <div class="student-reply-header">
+          <span class="student-reply-tag" id="studentReplyTag">💬 What You Said (Step 1/4)</span>
+          <div class="reply-colour-legend" id="studentReplyLegend" title="Lines that move the story to a new scene are highlighted by branch colour">
+            <span class="legend-dot step">Next Step / Golden</span>
+            <span class="legend-dot meme">Meme</span>
+            <span class="legend-dot chaos">Chaos</span>
+            <span class="legend-dot retry">Retry</span>
+            <span class="legend-dot fail">Fail</span>
+          </div>
+        </div>
+        <div class="student-reply-list empty-state" id="studentReplyText">Speak or type your response on the right to start the story…</div>
+      </div>
+
       <!-- 2-Column Episode & Grammar Overview Table (toggled by clicking 📋 Episodes & Grammar) -->
       <div class="endings-drawer" id="episodeMapDrawer">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -975,7 +1283,7 @@
 
     <!-- RIGHT COLUMN: PEDAGOGICAL SIDEBAR -->
     <aside class="sidebar">
-      <!-- Target Grammar Mission HUD -->
+      <!-- Target Grammar Mission HUD & Final Report Card -->
       <div class="card grammar-card" id="grammarCard">
         <div class="card-header" style="flex-wrap:wrap; gap:0.35rem;">
           <h2 class="card-title" id="grammarCardTitle">🎯 Target Grammar</h2>
@@ -985,19 +1293,48 @@
           <div class="grammar-item" id="grammarItem"></div>
           <div class="keyword-row" id="grammarKeywords"></div>
           <div class="hint-toggle-row">
-            <button type="button" class="ghost mini-btn" id="togglePatternsBtn" onclick="toggleSampleSentences()">💡 Sample Sentences ▾</button>
+            <button type="button" class="ghost mini-btn" id="togglePatternFormulaBtn" onclick="toggleSentencePattern()">🧩 Sentence Pattern ▾</button>
             <button type="button" class="ghost mini-btn" id="toggleCluesBtn" onclick="toggleEndingClues()">🎭 Ending Clues ▾</button>
           </div>
-          <div class="collapsible-box" id="grammarPatternsWrap" hidden>
-            <ul class="grammar-patterns" id="grammarPatterns" style="margin:0;"></ul>
+
+          <!-- Feature 2: Sentence Pattern ("Play-Safe Builder" Function) + Nested Sample Sentences -->
+          <div class="pattern-builder-box" id="sentencePatternWrap" hidden>
+            <div class="pattern-builder-title">
+              <span>🧩 Sentence Pattern Builder (Try your own words!)</span>
+            </div>
+            <div class="pattern-formula-line" id="sentencePatternFormula"></div>
+            <div class="pattern-slots-grid" id="sentencePatternSlots"></div>
+            <div style="margin-top:0.45rem;">
+              <button type="button" class="ghost mini-btn" id="togglePatternsBtn" onclick="toggleSampleSentences()">💡 Need more help? Show Sample Sentences ▾</button>
+            </div>
+            <div class="collapsible-box" id="grammarPatternsWrap" hidden style="background:#ffffff; margin-top:0.4rem;">
+              <ul class="grammar-patterns" id="grammarPatterns" style="margin:0;"></ul>
+            </div>
           </div>
+
           <div class="collapsible-box" id="endingCluesWrap" hidden>
             <ul class="ending-clues-list" id="endingCluesList"></ul>
           </div>
         </div>
+
+        <!-- Feature 3: S–D Grading System & Summary / Improvement Report Card -->
         <div class="ending-summary-box" id="grammarEndingBox" hidden>
-          <div class="ending-summary-text" id="endingSummaryText">Episode complete! Try unlocking another path.</div>
-          <button type="button" onclick="restartStory()">🔄 Play Again</button>
+          <div class="report-grade-row">
+            <div class="grade-circle grade-S" id="finalGradeBadge">S</div>
+            <div style="min-width:0; flex:1;">
+              <div style="font-size:0.72rem; font-weight:800; color:var(--accent-deep); text-transform:uppercase; letter-spacing:0.03em;">AI Speaking Coach Report Card</div>
+              <div class="ending-summary-text" id="endingSummaryText" style="font-size:1.02rem; margin:0.1rem 0 0.2rem 0;">Episode complete!</div>
+              <span class="episode-grammar-pill" id="finalGrammarPractised">Polite Offers · Quantifiers</span>
+            </div>
+          </div>
+          <div class="report-comment-card">
+            <div style="font-size:0.75rem; font-weight:800; color:var(--accent-deep); text-transform:uppercase; margin-bottom:0.35rem;">💬 Speaking Coach Review:</div>
+            <div id="finalCoachComment" style="font-size:0.86rem; line-height:1.45; color:var(--ink);"></div>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; width:100%;">
+            <button type="button" class="ghost" id="listenReportBtn" onclick="speakFinalReport()">🔊 Listen to Report</button>
+            <button type="button" onclick="restartStory()">🔄 Play Again</button>
+          </div>
         </div>
       </div>
 
@@ -1010,7 +1347,7 @@
                  onkeydown="if(event.key==='Enter')submitText()" />
           <button type="button" id="sendBtn" onclick="submitText()">Say It</button>
         </div>
-        <div class="you-said">You said: <span id="transcriptLog">—</span></div>
+        <div class="you-said" hidden>You said: <span id="transcriptLog">—</span></div>
       </div>
 
       <!-- AI Coach Feedback Card -->
@@ -3522,6 +3859,593 @@ function refreshSceneImage(customImagePrompt = null, overrideNode = null) {
   }
 }
 
+/* ============================================================================
+   7B. SOFTSPEAK-INSPIRED FEATURES FOR SAY IT LOUDER:
+       1) "What You Said" Journey Box (Colour-coded by scene transition, no ✅/❌)
+       2) Sentence Pattern Builder ("Play-Safe Builder") -> Sample Sentences
+       3) S–D Grading System + "- SUMMARY:" & "- IMPROVEMENT:" (with Alt Expressions)
+   ============================================================================ */
+let episodeStepHistory = [];
+let currentStepAttempts = [];
+let totalHintTriesCount = 0;
+let patternUsedSteps = new Set();
+let samplesUsedSteps = new Set();
+let retryNodesVisited = new Set();
+let stepsClearedCount = 0;
+let lastEndingEvalResult = null;
+let lastDirectAltTriggered = false;
+let currentReportSpeechText = "";
+
+const RETRY_NODE_KEYS = new Set([
+  "node_manager",
+  "node_clarify_dog",
+  "node_excuses",
+  "node_suspicion",
+  "node_rush",
+  "node_sparks"
+]);
+
+const NODE_SENTENCE_PATTERNS = {
+  ep1_boba: {
+    node_start: {
+      formula: `<span class="pat-slot">[ Polite Apology ]</span>! <span class="pat-slot-alt">[ Let me / Allow me to ]</span> + <span class="pat-slot">[ offer tissues or help ]</span>.`,
+      slots: [
+        ["[ Polite Apology ]", `"I'm so sorry" · "Sorry about that" · "I sincerely apologise"`],
+        ["[ Offer to Help ]", `"Let me get some tissues" · "Allow me to clean your hoodie" · "Let me wipe your sleeve"`]
+      ]
+    },
+    node_manager: {
+      formula: `<span class="pat-slot-alt">[ Allow me to / Let me / Would you let me ]</span> + <span class="pat-slot">[ clean it / remake your drink ]</span>.`,
+      slots: [
+        ["[ Polite Modal ]", `"Allow me to…" · "Let me…" · "Would you let me…?"`],
+        ["[ Action ]", `"get some tissues right away" · "clean it and remake your drink"`]
+      ]
+    },
+    node_stain: {
+      formula: `<span class="pat-slot-alt">[ Would you like / Could I give you ]</span> + <span class="pat-slot">[ a wet cloth / a refund ]</span>?`,
+      slots: [
+        ["[ Polite Offer ]", `"Would you like…?" · "Could I give you…?" · "Can I get you…?"`],
+        ["[ Helpful Item ]", `"a wet cloth" · "some soda water" · "a full refund"`]
+      ]
+    },
+    node_remake: {
+      formula: `<span class="pat-slot">[ Drink ]</span> with <span class="pat-slot-alt">[ half sugar ]</span> and <span class="pat-slot-alt">[ less ice ]</span>, please.`,
+      slots: [
+        ["[ Sugar Level ]", `"half sugar" · "50% sugar"`],
+        ["[ Ice Level ]", `"less ice" · "a little ice"`]
+      ]
+    },
+    node_voucher: {
+      formula: `<span class="pat-slot-alt">[ Please take this / Here is a ]</span> + <span class="pat-slot">[ free voucher / free coupon / free pearls ]</span>.`,
+      slots: [
+        ["[ Goodwill Opener ]", `"Please take this…" · "Here is a… for you" · "Allow me to give you…"`],
+        ["[ Gift ]", `"free voucher" · "free drink coupon" · "free pearl topping"`]
+      ]
+    }
+  },
+  ep2_puppy: {
+    node_start: {
+      formula: `I saw a <span class="pat-slot">[ puppy / dog ]</span> <span class="pat-slot-alt">[ which / that ]</span> has <span class="pat-slot">[ a special feature ]</span>.`,
+      slots: [
+        ["[ Relative Clause ]", `"which has…" · "that has…" · "which is wearing…"`],
+        ["[ Puppy Feature ]", `"a blue scarf" · "a fluffy tail" · "a red collar"`]
+      ]
+    },
+    node_clarify_dog: {
+      formula: `<span class="pat-slot">[ I saw / It is ]</span> the puppy <span class="pat-slot-alt">[ which / that ]</span> has <span class="pat-slot">[ a blue scarf / a fluffy tail ]</span>.`,
+      slots: [
+        ["[ Relative Pronoun ]", `"which has…" · "that has…"`],
+        ["[ Feature ]", `"a blue scarf" · "a fluffy tail" · "golden fur"`]
+      ]
+    },
+    node_clue: {
+      formula: `He <span class="pat-slot-alt">[ was + V-ing ]</span> <span class="pat-slot">[ outside the bakery / the warm buns ]</span>.`,
+      slots: [
+        ["[ Past Continuous ]", `"was sitting" · "was smelling" · "was waiting"`],
+        ["[ Place / Detail ]", `"outside the bakery" · "the warm buns" · "near the bread shop"`]
+      ]
+    },
+    node_directions: {
+      formula: `<span class="pat-slot-alt">[ Walk along / Go past ]</span> <span class="pat-slot">[ the road / shop ]</span> and <span class="pat-slot-alt">[ turn left ]</span>.`,
+      slots: [
+        ["[ Movement ]", `"Walk along the road" · "Go past the shop" · "Walk straight ahead"`],
+        ["[ Turn ]", `"and turn left" · "and turn right at the corner"`]
+      ]
+    },
+    node_reunion: {
+      formula: `Walk <span class="pat-slot-alt">[ slowly / quietly ]</span> and <span class="pat-slot">[ call him softly / give him a treat ]</span>.`,
+      slots: [
+        ["[ Calm Adverb 1 ]", `"slowly" · "quietly" · "calmly" · "gently"`],
+        ["[ Action + Adverb 2 ]", `"call him softly" · "give him a treat gently"`]
+      ]
+    }
+  },
+  ep3_project: {
+    node_start: {
+      formula: `<span class="pat-slot-alt">[ If / Unless ]</span> you <span class="pat-slot">[ stop playing / help me ]</span>, we will <span class="pat-slot">[ finish early / fail ]</span>.`,
+      slots: [
+        ["[ Condition ]", `"If you stop playing" · "If you help me now" · "Unless you help me"`],
+        ["[ Future Result ]", `"we will finish early" · "I will write the notes" · "we will fail"`]
+      ]
+    },
+    node_excuses: {
+      formula: `<span class="pat-slot-alt">[ If / Unless ]</span> you <span class="pat-slot">[ stop playing / help ]</span>, I will <span class="pat-slot">[ write the notes / tell Miss Wong ]</span>.`,
+      slots: [
+        ["[ Condition ]", `"If you stop playing" · "Unless you help me"`],
+        ["[ Result ]", `"I will write the notes" · "we will finish fast" · "I will tell Miss Wong"`]
+      ]
+    },
+    node_topic: {
+      formula: `<span class="pat-slot-alt">[ How about we / Why don't we / Let's ]</span> talk about <span class="pat-slot">[ HK history topic ]</span>?`,
+      slots: [
+        ["[ Suggestion Frame ]", `"How about we…?" · "Why don't we…?" · "Let's…" · "Shall we…?"`],
+        ["[ Topic ]", `"the Star Ferry" · "old trams" · "Hong Kong transport"`]
+      ]
+    },
+    node_delegate: {
+      formula: `<span class="pat-slot-alt">[ Why don't you / How about you ]</span> <span class="pat-slot">[ Leo's task ]</span> while I <span class="pat-slot">[ your task ]</span>?`,
+      slots: [
+        ["[ Partner's Task ]", `"make the slides" · "find the photos"`],
+        ["[ While I + Task ]", `"while I write the notes" · "while I write the script"`]
+      ]
+    },
+    node_rehearse: {
+      formula: `<span class="pat-slot-alt">[ Let's / Shall we ]</span> practise <span class="pat-slot">[ together right now / our script once ]</span>.`,
+      slots: [
+        ["[ Practice Frame ]", `"Let's practise…" · "Shall we practise…?"`],
+        ["[ How / When ]", `"together right now" · "our script once" · "before we go home"`]
+      ]
+    }
+  },
+  ep4_customs: {
+    node_start: {
+      formula: `<span class="pat-slot-alt">[ While / When ]</span> I was <span class="pat-slot">[ V-ing in Japan ]</span>, I <span class="pat-slot">[ bought / got ]</span> this box.`,
+      slots: [
+        ["[ Past Continuous ]", `"While I was shopping" · "When I was visiting Japan" · "While I was travelling"`],
+        ["[ Past Simple ]", `"I bought this box" · "I got this souvenir"`]
+      ]
+    },
+    node_suspicion: {
+      formula: `<span class="pat-slot-alt">[ While / When ]</span> I was <span class="pat-slot">[ shopping / visiting Tokyo ]</span>, I <span class="pat-slot">[ bought ]</span> it.`,
+      slots: [
+        ["[ Past Continuous ]", `"While I was shopping" · "When I was visiting Tokyo"`],
+        ["[ Past Simple ]", `"I bought this box" · "I bought it"`]
+      ]
+    },
+    node_open_box: {
+      formula: `While I was <span class="pat-slot-alt">[ packing / carrying my bag ]</span>, I <span class="pat-slot">[ wound the music box / pressed the button ]</span>.`,
+      slots: [
+        ["[ Background Action ]", `"While I was packing" · "When I was carrying my bag"`],
+        ["[ Cause ]", `"I wound the music box" · "I pressed the button"`]
+      ]
+    },
+    node_inspect_wood: {
+      formula: `<span class="pat-slot">[ The wood / It ]</span> <span class="pat-slot-alt">[ was treated / was checked / was certified ]</span> <span class="pat-slot">[ safe / in Japan ]</span>.`,
+      slots: [
+        ["[ Passive Verb ]", `"was treated" · "was checked" · "was certified" · "was inspected"`],
+        ["[ Detail ]", `"in Japan" · "and certified safe"`]
+      ]
+    },
+    node_declare: {
+      formula: `<span class="pat-slot">[ The paper / It ]</span> <span class="pat-slot-alt">[ is inside the box / was bought as a gift ]</span> for <span class="pat-slot">[ my mum / family ]</span>.`,
+      slots: [
+        ["[ Location / Passive ]", `"is inside the box" · "is attached inside" · "was bought as a gift"`],
+        ["[ Recipient ]", `"for my mum" · "for my family"`]
+      ]
+    }
+  },
+  ep5_sub: {
+    node_start: {
+      formula: `<span class="pat-slot-alt">[ I'd like / Could I have / Can I get ]</span> <span class="pat-slot">[ bread choice ]</span>, please.`,
+      slots: [
+        ["[ Polite Order ]", `"I'd like…" · "Could I have…?" · "Can I get…?"`],
+        ["[ Bread ]", `"honey oat bread" · "Italian bread" · "six-inch wheat bread"`]
+      ]
+    },
+    node_rush: {
+      formula: `<span class="pat-slot-alt">[ Could I have / I'd like ]</span> <span class="pat-slot">[ honey oat / Italian bread ]</span>, please?`,
+      slots: [
+        ["[ Polite Order ]", `"Could I have…?" · "I'd like…"`],
+        ["[ Bread ]", `"honey oat bread, please" · "Italian bread, please"`]
+      ]
+    },
+    node_fillings: {
+      formula: `<span class="pat-slot">[ Meat ]</span> <span class="pat-slot-alt">with</span> <span class="pat-slot">[ cheese ]</span>, <span class="pat-slot-alt">toasted</span> please.`,
+      slots: [
+        ["[ Meat + With + Cheese ]", `"Chicken with cheese" · "Tuna with cheese" · "Ham with cheddar cheese"`],
+        ["[ Preparation ]", `"toasted, please"`]
+      ]
+    },
+    node_veggies: {
+      formula: `<span class="pat-slot-alt">With</span> <span class="pat-slot">[ veggies you want ]</span>, <span class="pat-slot-alt">[ but no / without ]</span> <span class="pat-slot">[ veggie to skip ]</span>.`,
+      slots: [
+        ["[ Wanted Veggies ]", `"With lettuce and tomato" · "With cucumber and lettuce"`],
+        ["[ Exclusion ]", `"but no onions" · "without chillies" · "but no olives"`]
+      ]
+    },
+    node_sauce: {
+      formula: `<span class="pat-slot-alt">[ A little / Some ]</span> <span class="pat-slot">[ sauce ]</span>, <span class="pat-slot-alt">[ to take away / for here ]</span> please.`,
+      slots: [
+        ["[ Amount + Sauce ]", `"A little honey mustard" · "Some mayo" · "A little sweet onion sauce"`],
+        ["[ Dining Choice ]", `"to take away" · "for here, please"`]
+      ]
+    }
+  },
+  ep6_dragon: {
+    node_start: {
+      formula: `<span class="pat-slot">[ Don't worry / Stay calm ]</span>! <span class="pat-slot-alt">[ I can / Let me ]</span> <span class="pat-slot">[ hide him / use my bag ]</span>.`,
+      slots: [
+        ["[ Reassurance ]", `"Don't worry!" · "Stay calm!"`],
+        ["[ Offer ]", `"I can hide him" · "Let me use my bag" · "I can cover him with my jacket"`]
+      ]
+    },
+    node_sparks: {
+      formula: `Don't worry! <span class="pat-slot-alt">[ I can / Let me ]</span> <span class="pat-slot">[ hide him in my bag / cover him ]</span>.`,
+      slots: [
+        ["[ Offer ]", `"I can hide him in my bag" · "Let me cover him with my jacket"`]
+      ]
+    },
+    node_disguise: {
+      formula: `Say he is a <span class="pat-slot">[ toy / doll ]</span> <span class="pat-slot-alt">[ because / so ]</span> <span class="pat-slot">[ reason ]</span>.`,
+      slots: [
+        ["[ Disguise ]", `"Say he is a toy" · "Say he is a plush doll" · "Say he is a mascot"`],
+        ["[ Connective + Reason ]", `"because he is small" · "because he looks cute" · "so they won't worry"`]
+      ]
+    },
+    node_hungry: {
+      formula: `<span class="pat-slot-alt">You shouldn't</span> <span class="pat-slot">[ give him spicy food ]</span>! <span class="pat-slot-alt">You should</span> <span class="pat-slot">[ give him sweet food ]</span>.`,
+      slots: [
+        ["[ Shouldn't ]", `"You shouldn't give him spicy fishballs"`],
+        ["[ Should ]", `"You should give him egg waffles" · "You should buy him sweet snacks"`]
+      ]
+    },
+    node_portal: {
+      formula: `<span class="pat-slot-alt">First</span>, <span class="pat-slot">[ action 1 ]</span>, <span class="pat-slot-alt">and then</span> <span class="pat-slot">[ action 2 ]</span>.`,
+      slots: [
+        ["[ First Step ]", `"First, tap the stone" · "First, hold Sparky"`],
+        ["[ Second Step ]", `"and then walk in" · "and then step through"`]
+      ]
+    }
+  }
+};
+
+const EPISODE_ALT_EXPRESSIONS = {
+  ep1_boba: {
+    altGolden: `Try other polite phrases like "Allow me to wipe it", "Could I offer you a refund?", or unlock the Milan Fashion Meme ending!`,
+    altFromMeme: `Fun fashion twist! Next, try polite offers like "I'm so sorry! Let me get tissues" to explore the 4-step Golden path.`,
+    altFromChaos: `Next time, include both quantifiers ("half sugar and less ice"), or try the Milan Fashion Meme ending!`
+  },
+  ep2_puppy: {
+    altGolden: `Try mixing in "that is wearing…", "Go past the shop…", or "Walk quietly…", or unlock the Circus Meme ending!`,
+    altFromMeme: `Fun circus detour! Next, try relative clauses like "I saw a puppy which has a blue scarf" for the 4-step rescue path.`,
+    altFromChaos: `Next time, pair a movement phrase ("Walk along…" / "Go past…") with a turn and calm adverbs ("slowly", "softly")!`
+  },
+  ep3_project: {
+    altGolden: `Try switching between "If you…" and "Unless you…", or "How about you… while I…", or test the 1v1 Esports Meme ending!`,
+    altFromMeme: `Epic 1v1 match! Next, try bargaining with "If you stop playing, we will finish early" to explore the teamwork path.`,
+    altFromChaos: `Next time, divide the tasks clearly using "Why don't you make slides while I write notes?"`
+  },
+  ep4_customs: {
+    altGolden: `Try alternative frames like "When I was visiting Japan…" and "It was certified safe", or unlock the Ninja Meme ending!`,
+    altFromMeme: `Stealthy ninja pass! Next, try Past Continuous ("While I was shopping, I bought…") and Passive Voice on the 4-step path.`,
+    altFromChaos: `Next time, use Passive Voice ("The wood was treated and checked") and state where the certificate is kept!`
+  },
+  ep5_sub: {
+    altGolden: `Try different orders like "Could I have Italian bread?", "tuna with cheese", or "without chillies", or unlock the 100-Layer Sub Meme!`,
+    altFromMeme: `Towering sub unlocked! Next, try ordering step by step with "I'd like…", "with… but no…", and "a little… to take away".`,
+    altFromChaos: `Next time, state your exclusion clearly ("with lettuce, but no chillies") and quantifier ("a little honey mustard")!`
+  },
+  ep6_dragon: {
+    altGolden: `Try expressions like "Stay calm! Let me…", "so they won't worry", or unlock the Dim Sum Chef Meme ending!`,
+    altFromMeme: `Delicious dim sum detour! Next, try helping Aria across all 4 steps using "I can…", "because / so", and "First… and then…".`,
+    altFromChaos: `Next time, combine "You shouldn't… You should…" and sequence the portal steps with "First, … and then …"!`
+  }
+};
+
+function getShortStepLabel(nodeKey, node) {
+  if (!node) return "Current Step";
+  if (node.isEnding) return "Episode Complete";
+  const item = String(node.targetGrammar?.item || "");
+  const m = item.match(/Step\s*\d+\s*\/\s*\d+/i);
+  if (m) return m[0].replace(/\s+/g, " ");
+  if (RETRY_NODE_KEYS.has(nodeKey) || /retry/i.test(String(node.goalHint || ""))) {
+    return "Retry Step 1";
+  }
+  return "Active Step";
+}
+
+function classifyBranchOutcome(fromNodeKey, targetNodeKey, usedGrammar, directAlt) {
+  if (!targetNodeKey || targetNodeKey === fromNodeKey || targetNodeKey === "node_pardon") {
+    return { kind: "stay", badgeText: "Same Scene · Hint" };
+  }
+  const targetNode = currentEpisode?.nodes?.[targetNodeKey];
+  if (!targetNode) {
+    return { kind: "stay", badgeText: "Same Scene" };
+  }
+  if (targetNode.isEnding) {
+    const et = targetNode.endingType || "fail";
+    if (et === "golden") return { kind: "step", badgeText: "→ 🏆 Golden Ending" };
+    if (et === "meme") return { kind: "meme", badgeText: "→ 🤪 Secret Meme" };
+    if (et === "chaos") return { kind: "chaos", badgeText: "→ 🌪️ Chaos Ending" };
+    return { kind: "fail", badgeText: "→ 💥 Fail Ending" };
+  }
+  if (RETRY_NODE_KEYS.has(targetNodeKey)) {
+    return { kind: "retry", badgeText: "→ 🔄 Retry Scene" };
+  }
+  const nextStepName = getShortStepLabel(targetNodeKey, targetNode);
+  return { kind: "step", badgeText: `→ ${nextStepName}` };
+}
+
+function updateStudentReplyDisplay(livePreviewText = null) {
+  const box = document.getElementById("studentReplyBox");
+  const tag = document.getElementById("studentReplyTag");
+  const textEl = document.getElementById("studentReplyText");
+  if (!box || !tag || !textEl || !currentEpisode) return;
+
+  const activeNode = currentEpisode.nodes[currentNodeKey];
+  const isEnding = Boolean(activeNode && activeNode.isEnding);
+
+  if (isEnding) {
+    tag.textContent = "💬 What You Said (Episode Journey)";
+  } else {
+    tag.textContent = `💬 What You Said (${getShortStepLabel(currentNodeKey, activeNode)})`;
+  }
+
+  const rowsHtml = [];
+
+  // 1. Render completed scene transitions from earlier steps in this episode
+  episodeStepHistory.forEach((entry) => {
+    // Show any earlier same-scene attempts on that step in subtle neutral style
+    (entry.stayAttempts || []).forEach((att, idx) => {
+      rowsHtml.push(
+        `<div class="reply-line-item reply-line-stay">
+          <span>${escapeHtml(entry.stepLabel)} (Try ${idx + 1}): &ldquo;${escapeHtml(att)}&rdquo;</span>
+          <span class="reply-branch-pill">Same Scene · Hint</span>
+        </div>`
+      );
+    });
+    // Highlight the line that led to a different next scene with its branch colour (no ✅ or ❌)
+    const colourClass = `reply-line-${entry.branchKind || "step"}`;
+    rowsHtml.push(
+      `<div class="reply-line-item ${colourClass}">
+        <span>${escapeHtml(entry.stepLabel)}: &ldquo;${escapeHtml(entry.transitionText)}&rdquo;</span>
+        <span class="reply-branch-pill">${escapeHtml(entry.badgeText)}</span>
+      </div>`
+    );
+  });
+
+  // 2. Render attempts on the current active step (if not at an ending)
+  if (!isEnding) {
+    const stepName = getShortStepLabel(currentNodeKey, activeNode);
+    currentStepAttempts.forEach((att, idx) => {
+      rowsHtml.push(
+        `<div class="reply-line-item reply-line-stay">
+          <span>${escapeHtml(stepName)} (Try ${idx + 1}): &ldquo;${escapeHtml(att)}&rdquo;</span>
+          <span class="reply-branch-pill">Same Scene · Try another expression</span>
+        </div>`
+      );
+    });
+
+    if (livePreviewText && String(livePreviewText).trim()) {
+      rowsHtml.push(
+        `<div class="reply-line-item reply-line-stay" style="border-style:solid; border-color:var(--accent);">
+          <span>🎙️ ${escapeHtml(stepName)} (Speaking): &ldquo;${escapeHtml(String(livePreviewText).trim())}&rdquo;</span>
+          <span class="reply-branch-pill">Ready to Say It</span>
+        </div>`
+      );
+    }
+  }
+
+  if (rowsHtml.length === 0) {
+    box.classList.remove("has-input");
+    textEl.classList.add("empty-state");
+    textEl.textContent = "Speak or type your response on the right to start the story…";
+  } else {
+    box.classList.add("has-input");
+    textEl.classList.remove("empty-state");
+    textEl.innerHTML = rowsHtml.join("");
+  }
+}
+
+function getSentencePatternData(epKey, nodeKey, node) {
+  const custom = NODE_SENTENCE_PATTERNS[epKey]?.[nodeKey];
+  if (custom) return custom;
+  const tg = node?.targetGrammar || {};
+  const kws = (tg.keywords || []).slice(0, 4).join(" / ") || "target words";
+  return {
+    formula: `Use <span class="pat-slot-alt">[ ${escapeHtml(tg.item || "Target Pattern")} ]</span> with <span class="pat-slot">[ your own details ]</span>.`,
+    slots: [
+      ["[ Key Words ]", kws]
+    ]
+  };
+}
+
+function markPatternUsedForCurrentStep() {
+  if (currentNodeKey && !currentEpisode?.nodes?.[currentNodeKey]?.isEnding) {
+    patternUsedSteps.add(currentNodeKey);
+  }
+}
+
+function markSamplesUsedForCurrentStep() {
+  if (currentNodeKey && !currentEpisode?.nodes?.[currentNodeKey]?.isEnding) {
+    patternUsedSteps.add(currentNodeKey);
+    samplesUsedSteps.add(currentNodeKey);
+  }
+}
+
+function setSentencePatternOpen(open, recordUsage = true) {
+  const wrap = document.getElementById("sentencePatternWrap");
+  const btn = document.getElementById("togglePatternFormulaBtn");
+  if (!wrap || !btn) return;
+  wrap.hidden = !open;
+  btn.textContent = open ? "🧩 Hide Sentence Pattern ▴" : "🧩 Sentence Pattern ▾";
+  btn.classList.toggle("active", Boolean(open));
+  if (open && recordUsage) {
+    markPatternUsedForCurrentStep();
+  }
+}
+
+function setSampleSentencesOpen(open, recordUsage = true) {
+  const wrap = document.getElementById("grammarPatternsWrap");
+  const btn = document.getElementById("togglePatternsBtn");
+  if (!wrap || !btn) return;
+  if (open) {
+    // Ensure parent Sentence Pattern container is also visible
+    setSentencePatternOpen(true, recordUsage);
+  }
+  wrap.hidden = !open;
+  btn.textContent = open
+    ? "💡 Hide Sample Sentences ▴"
+    : "💡 Need more help? Show Sample Sentences ▾";
+  btn.classList.toggle("active", Boolean(open));
+  if (open && recordUsage) {
+    markSamplesUsedForCurrentStep();
+  }
+}
+
+function toggleSentencePattern() {
+  const wrap = document.getElementById("sentencePatternWrap");
+  if (!wrap) return;
+  const willOpen = wrap.hidden;
+  setSentencePatternOpen(willOpen, true);
+}
+
+function computeEpisodeGradeAndReport(endingNode) {
+  const endingType = endingNode?.endingType || "fail";
+  const patternCount = patternUsedSteps.size;
+  const samplesCount = samplesUsedSteps.size;
+  const retriesCount = retryNodesVisited.size;
+  const hintsCount = totalHintTriesCount;
+  const altInfo = EPISODE_ALT_EXPRESSIONS[currentEpisodeKey] || {
+    altGolden: "Try expressing each step with new phrases or unlock a secret ending!",
+    altFromMeme: "Fun creative ending! Try completing all 4 steps on the Golden path next.",
+    altFromChaos: "Try using the full target grammar pattern to unlock the Golden Ending!"
+  };
+
+  let grade = "S";
+  let titlePrefix = "";
+  let summaryLine = "";
+  let improvementLine = "";
+
+  const rawLabel = String(endingNode?.endingLabel || "Episode Complete")
+    .replace(/^.*?(GOLDEN ENDING|FAIL ENDING|CHAOS ENDING|SECRET MEME ENDING)\s*:\s*/i, "")
+    .trim();
+
+  if (endingType === "golden") {
+    if (retriesCount === 0 && samplesCount === 0 && patternCount === 0 && hintsCount === 0) {
+      grade = "S";
+      titlePrefix = "🏆 Golden Ending:";
+      summaryLine = "Cleared all 4 steps on the first try using your own expressions!";
+      improvementLine = altInfo.altGolden;
+    } else if (retriesCount === 0 && samplesCount === 0 && patternCount <= 2 && hintsCount <= 2) {
+      grade = "A";
+      titlePrefix = "🌟 Great Ending:";
+      summaryLine = patternCount > 0
+        ? "Completed all 4 steps well with the Sentence Pattern Builder."
+        : "Completed all 4 steps clearly with minimal hints.";
+      improvementLine = patternCount > 0
+        ? `Try forming the sentences from Keywords alone, or ${altInfo.altGolden.charAt(0).toLowerCase() + altInfo.altGolden.slice(1)}`
+        : altInfo.altGolden;
+    } else if (samplesCount <= 1 && retriesCount <= 1 && hintsCount <= 4) {
+      grade = "B";
+      titlePrefix = "👍 Good Ending:";
+      summaryLine = "Completed the 4-step story using Sentence Patterns and hints.";
+      improvementLine = samplesCount > 0
+        ? `Try building your own sentence from the Sentence Pattern without opening Sample Sentences! (${altInfo.altGolden})`
+        : `Practise saying the target patterns on your first try, or explore another ending!`;
+    } else {
+      grade = "C";
+      titlePrefix = "✅ Story Cleared:";
+      summaryLine = "Finished all 4 steps with support from Sample Sentences and retries.";
+      improvementLine = "Replay and try using only the Sentence Pattern slots in your own words!";
+    }
+  } else if (endingType === "meme") {
+    const usedGrammarOnMeme = Boolean(lastEndingEvalResult?.used_target_grammar);
+    if (stepsClearedCount >= 1 && samplesCount === 0) {
+      grade = "S";
+    } else if (usedGrammarOnMeme && samplesCount === 0 && hintsCount <= 1) {
+      grade = "A";
+    } else {
+      grade = "B";
+    }
+    titlePrefix = "🤪 Secret Meme Ending:";
+    summaryLine = `Unlocked the Secret Meme branch ("${rawLabel}") with a creative expression!`;
+    improvementLine = altInfo.altFromMeme;
+  } else if (endingType === "chaos") {
+    if (lastDirectAltTriggered && hintsCount <= 1) {
+      grade = "B";
+      summaryLine = `Triggered the "${rawLabel}" Chaos branch by experimenting with the story!`;
+    } else {
+      grade = "C";
+      summaryLine = `Reached the "${rawLabel}" Chaos ending on the later steps.`;
+    }
+    titlePrefix = "🌪️ Chaos Ending:";
+    improvementLine = altInfo.altFromChaos;
+  } else {
+    grade = "D";
+    titlePrefix = "💥 Fail Ending:";
+    summaryLine = `Reached "${rawLabel}" before completing the speaking steps.`;
+    const hintTip = String(endingNode?.goalHint || "").replace(/^💡\s*Tip:\s*/i, "").trim();
+    improvementLine = hintTip
+      ? `${hintTip} Or open the Sentence Pattern Builder to craft your own polite reply!`
+      : "Use the Keywords and Sentence Pattern Builder to guide your response.";
+  }
+
+  return {
+    grade,
+    displayTitle: `${titlePrefix} ${rawLabel}`,
+    summaryLine,
+    improvementLine
+  };
+}
+
+function renderEndingReportCard(node) {
+  const report = computeEpisodeGradeAndReport(node);
+  const gradeBadge = document.getElementById("finalGradeBadge");
+  const summaryTitle = document.getElementById("endingSummaryText");
+  const grammarPill = document.getElementById("finalGrammarPractised");
+  const commentBox = document.getElementById("finalCoachComment");
+  const stageEndingBadge = document.getElementById("endingBadge");
+
+  if (gradeBadge) {
+    gradeBadge.textContent = report.grade;
+    gradeBadge.className = `grade-circle grade-${report.grade}`;
+  }
+  if (summaryTitle) {
+    summaryTitle.textContent = report.displayTitle;
+  }
+  if (grammarPill && currentEpisode) {
+    grammarPill.textContent = `Grammar: ${currentEpisode.grammarSummary || ""}`;
+  }
+  if (stageEndingBadge) {
+    stageEndingBadge.textContent = `${report.displayTitle} · Grade ${report.grade}`;
+  }
+
+  currentReportSpeechText = `Grade ${report.grade}. ${report.displayTitle}. Summary: ${report.summaryLine} Improvement and next possibilities: ${report.improvementLine}`;
+
+  if (commentBox) {
+    commentBox.innerHTML = `
+      <div style="margin-bottom:0.35rem;">
+        <div class="report-section-label">- SUMMARY:</div>
+        <div style="padding-left:0.55rem; font-weight:700; color:var(--navy);">${escapeHtml(report.summaryLine)}</div>
+      </div>
+      <div class="report-improvement-box">
+        <div style="font-size:0.74rem; font-weight:800; color:#15803d; letter-spacing:0.03em; text-transform:uppercase; margin-bottom:0.15rem;">- IMPROVEMENT &amp; NEXT POSSIBILITIES:</div>
+        <div style="padding-left:0.45rem;">${escapeHtml(report.improvementLine)}</div>
+      </div>
+    `;
+  }
+}
+
+function speakFinalReport() {
+  if (!currentReportSpeechText) return;
+  if (isMuted) {
+    showToast("Sound is muted. Click '🔇 Muted' in the top bar to unmute.");
+    return;
+  }
+  speakCharacterLine(currentReportSpeechText, "coach");
+}
+
 /* Universal handler for incomprehensible input across all current & future episodes */
 function triggerPardonScene(customReaction = null, customTip = null) {
   if (!currentEpisode) return;
@@ -3542,8 +4466,8 @@ function triggerPardonScene(customReaction = null, customTip = null) {
   if (pardonInputEl) pardonInputEl.value = "";
 
   refreshSceneImage(null, activeNode);
-  renderGrammarCard(activeNode);
   speakCharacterLine(lineToSpeak);
+  updateStudentReplyDisplay();
 
   const scorePill = document.getElementById("scorePill");
   scorePill.textContent = "Improv ↺";
@@ -3563,9 +4487,8 @@ function renderGrammarCard(node) {
     missionBody.hidden = true;
     endingBox.hidden = false;
     inputCard.hidden = true;
-    cardTitle.textContent = "🏁 Episode Outcome";
-    document.getElementById("endingSummaryText").textContent =
-      `${node.endingLabel || node.speaker} — ${node.goalHint || "Try another branch!"}`;
+    cardTitle.textContent = "🏁 Episode Report Card";
+    renderEndingReportCard(node);
     return;
   }
 
@@ -3576,18 +4499,28 @@ function renderGrammarCard(node) {
 
   const tg = node.targetGrammar;
   document.getElementById("grammarItem").textContent = tg.item || "";
+
+  // Populate Sentence Pattern ("Play-Safe Builder" function)
+  const patData = getSentencePatternData(currentEpisodeKey, currentNodeKey, node);
+  const formulaEl = document.getElementById("sentencePatternFormula");
+  const slotsEl = document.getElementById("sentencePatternSlots");
+  if (formulaEl) {
+    formulaEl.innerHTML = patData.formula || "";
+  }
+  if (slotsEl) {
+    slotsEl.innerHTML = (patData.slots || [])
+      .map(([label, opts]) => `<div class="pattern-slot-label">${escapeHtml(label)}:</div><div class="pattern-slot-options">${escapeHtml(opts)}</div>`)
+      .join("");
+  }
+
+  // Populate Sample Sentences (nested inside Sentence Pattern)
   document.getElementById("grammarPatterns").innerHTML = (tg.patterns || [])
     .map(p => `<li>${escapeHtml(p)}</li>`)
     .join("");
 
-  // Keep sample sentences collapsed by default so weaker students can click to view
-  const patternsWrap = document.getElementById("grammarPatternsWrap");
-  const patternsBtn = document.getElementById("togglePatternsBtn");
-  if (patternsWrap) patternsWrap.hidden = true;
-  if (patternsBtn) {
-    patternsBtn.textContent = "💡 Sample Sentences ▾";
-    patternsBtn.classList.remove("active");
-  }
+  // 1st attempt on a step: Keywords visible right away, Sentence Pattern & Sample Sentences collapsed
+  setSentencePatternOpen(false, false);
+  setSampleSentencesOpen(false, false);
 
   // Populate compact Ending Clues for the active episode
   const cluesList = document.getElementById("endingCluesList");
@@ -3613,11 +4546,9 @@ function insertKeyword(kw) {
 
 function toggleSampleSentences() {
   const wrap = document.getElementById("grammarPatternsWrap");
-  const btn = document.getElementById("togglePatternsBtn");
-  if (!wrap || !btn) return;
-  wrap.hidden = !wrap.hidden;
-  btn.textContent = wrap.hidden ? "💡 Sample Sentences ▾" : "💡 Hide Sentences ▴";
-  btn.classList.toggle("active", !wrap.hidden);
+  if (!wrap) return;
+  const willOpen = wrap.hidden;
+  setSampleSentencesOpen(willOpen, true);
 }
 
 function toggleEndingClues() {
@@ -3670,8 +4601,12 @@ function goToNode(nodeKey, customAiLine = null, customImagePrompt = null) {
   }
   if (nodeKey !== currentNodeKey) {
     currentNodeImprovCount = 0;
+    currentStepAttempts = [];
   }
   currentNodeKey = nodeKey;
+  if (RETRY_NODE_KEYS.has(nodeKey)) {
+    retryNodesVisited.add(nodeKey);
+  }
   const node = currentEpisode.nodes[nodeKey];
   if (!node) return;
 
@@ -3689,6 +4624,7 @@ function goToNode(nodeKey, customAiLine = null, customImagePrompt = null) {
   renderGrammarCard(node);
   refreshSceneImage(customImagePrompt);
   markEndingUnlocked(node);
+  updateStudentReplyDisplay();
   speakCharacterLine(lineToSpeak);
 
   if (node.isEnding) {
@@ -4720,7 +5656,12 @@ function detectDirectAlternateEnding(transcript) {
 }
 
 function applyEvaluationResult(node, out, rawTranscript = "") {
+  const cleanLine = String(rawTranscript || "").trim();
   if (!out || out.chosen_target_node === "node_pardon" || out.incomprehensible) {
+    if (cleanLine) {
+      currentStepAttempts.push(cleanLine);
+      totalHintTriesCount += 1;
+    }
     playFailBuzzer();
     triggerPardonScene(
       out?.character_reaction || buildSpontaneousOfflineReply("", node).reaction,
@@ -4747,11 +5688,14 @@ function applyEvaluationResult(node, out, rawTranscript = "") {
     chosen = preferNonGolden(node, chosen);
   }
 
-  // 3-Try Guidance Rule:
-  // If the student hasn't used the target grammar yet (and didn't trigger a direct Meme/Chaos/Rude ending),
-  // guide them with hints on Tries 1 and 2, then automatically progress to the Retry/Fail/Chaos branch on Try 3!
+  // 3-Try Progressive Scaffolding Rule:
+  // Attempt 1 (initial): Keywords visible right away.
+  // Attempt 2 (after 1st try without target grammar -> Try 1/3): Auto-open Sentence Pattern ("Play-Safe Builder").
+  // Attempt 3 (after 2nd try without target grammar -> Try 2/3): Auto-open Sample Sentences.
+  // After 3rd try without target grammar: Progress to the non-golden branch (Retry / Chaos / Fail).
   if (!used && !directAlt) {
     currentNodeImprovCount += 1;
+    totalHintTriesCount += 1;
     if (currentNodeImprovCount < 3) {
       chosen = currentNodeKey;
     } else {
@@ -4774,28 +5718,51 @@ function applyEvaluationResult(node, out, rawTranscript = "") {
   }
 
   document.getElementById("teacherTip").textContent =
-    out.teacher_tip || "Click '💡 Sample Sentences' above if you need a sentence frame.";
+    out.teacher_tip || "Use the Sentence Pattern Builder above to form your reply.";
 
-  // When staying on the current scene (Tries 1 & 2), speak the character's live hint
-  // and auto-open Sample Sentences on Try 2 to support weaker students!
+  // When staying on the current scene (Tries 1 & 2):
+  // - Record in currentStepAttempts for "What You Said"
+  // - On Try 1/3 (2nd attempt): Auto-open Sentence Pattern Builder
+  // - On Try 2/3 (3rd attempt): Auto-open Sample Sentences
   if (chosen === currentNodeKey) {
+    if (cleanLine) {
+      currentStepAttempts.push(cleanLine);
+    }
     const liveReply = out.character_reaction || buildSpontaneousOfflineReply(rawTranscript, node).reaction;
     document.getElementById("speakerName").textContent = node.speaker;
     setDialogueWithTypewriter(liveReply);
     document.getElementById("situationPrompt").textContent = node.goalHint || "";
     speakCharacterLine(liveReply);
-    if (currentNodeImprovCount >= 2) {
-      const patternsWrap = document.getElementById("grammarPatternsWrap");
-      const patternsBtn = document.getElementById("togglePatternsBtn");
-      if (patternsWrap && patternsWrap.hidden) {
-        patternsWrap.hidden = false;
-        if (patternsBtn) {
-          patternsBtn.textContent = "💡 Hide Sentences ▴";
-          patternsBtn.classList.add("active");
-        }
-      }
+
+    if (currentNodeImprovCount === 1) {
+      setSentencePatternOpen(true, true);
+    } else if (currentNodeImprovCount >= 2) {
+      setSentencePatternOpen(true, true);
+      setSampleSentencesOpen(true, true);
     }
+    updateStudentReplyDisplay();
   } else {
+    // Transitioning to a different next scene!
+    // Record the line in episodeStepHistory with its branch colour (no ✅ or ❌)
+    const branchInfo = classifyBranchOutcome(currentNodeKey, chosen, used, Boolean(directAlt));
+    if (cleanLine) {
+      episodeStepHistory.push({
+        fromNodeKey: currentNodeKey,
+        toNodeKey: chosen,
+        stepLabel: getShortStepLabel(currentNodeKey, node),
+        stayAttempts: [...currentStepAttempts],
+        transitionText: cleanLine,
+        branchKind: branchInfo.kind,
+        badgeText: branchInfo.badgeText
+      });
+    }
+    currentStepAttempts = [];
+    if (used && !directAlt) {
+      stepsClearedCount += 1;
+    }
+    lastEndingEvalResult = out;
+    lastDirectAltTriggered = Boolean(directAlt);
+
     const nextNode = currentEpisode.nodes[chosen];
     let combinedLine = null;
     if (out.character_reaction && nextNode) {
@@ -4825,6 +5792,8 @@ async function evaluateStudentSpeech(transcript) {
   const isRudeQuick = /\b(shut up|stupid|idiot|your fault|not my problem|whatever|who cares|no way|go away)\b/i.test(cleanText);
   if (!isRudeQuick && isIncomprehensibleInput(cleanText, node)) {
     document.getElementById("transcriptLog").textContent = `"${cleanText}"`;
+    currentStepAttempts.push(cleanText);
+    totalHintTriesCount += 1;
     handleLiveInput(cleanText);
     playFailBuzzer();
     triggerPardonScene();
@@ -4993,7 +5962,8 @@ function finishMicRecordingToInput() {
   if (val) {
     document.getElementById("transcriptLog").textContent = `"${val}"`;
     handleLiveInput(val);
-    showToast("Voice captured! Review your line below and click Send.");
+    updateStudentReplyDisplay(val);
+    showToast("Voice captured! Review your line below and click Say It.");
   }
   input.focus();
 }
@@ -5030,6 +6000,7 @@ function setupVoiceRecognition() {
       document.getElementById("textInput").value = combinedText;
       document.getElementById("transcriptLog").textContent = `"${combinedText}…"`;
       handleLiveInput(combinedText);
+      updateStudentReplyDisplay(combinedText);
     }
   };
 
@@ -5154,6 +6125,20 @@ function restartStory() {
   const select = document.getElementById("episodeSelect");
   currentEpisodeKey = select.value || "ep1_boba";
   currentEpisode = EPISODES[currentEpisodeKey];
+
+  // Reset per-episode "What You Said", Scaffolding & Grading tracking
+  episodeStepHistory = [];
+  currentStepAttempts = [];
+  currentNodeImprovCount = 0;
+  totalHintTriesCount = 0;
+  patternUsedSteps = new Set();
+  samplesUsedSteps = new Set();
+  retryNodesVisited = new Set();
+  stepsClearedCount = 0;
+  lastEndingEvalResult = null;
+  lastDirectAltTriggered = false;
+  currentReportSpeechText = "";
+
   document.getElementById("sceneTitle").textContent = currentEpisode.shortTitle || currentEpisode.title;
   const epGrammarPill = document.getElementById("episodeGrammarPill");
   if (epGrammarPill) {
@@ -5162,7 +6147,7 @@ function restartStory() {
   renderEpisodeGrammarTable();
   document.getElementById("transcriptLog").textContent = "—";
   document.getElementById("textInput").value = "";
-  document.getElementById("teacherTip").textContent = "Use the sentence frames and keywords above.";
+  document.getElementById("teacherTip").textContent = "Use the keywords above, or open 🧩 Sentence Pattern if you need help.";
   const scorePill = document.getElementById("scorePill");
   scorePill.textContent = "Ready";
   scorePill.className = "score-pill";
