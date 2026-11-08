@@ -1283,6 +1283,18 @@
 
     <!-- RIGHT COLUMN: PEDAGOGICAL SIDEBAR -->
     <aside class="sidebar">
+      <!-- Voice Dispatch & Text Input (Seated at Top so Expanding Hints Never Shifts Input) -->
+      <div class="card" id="inputCard">
+        <button type="button" id="micBtn" class="mic-btn" onclick="toggleMic()">🎤 Tap &amp; Speak</button>
+        <div class="input-row">
+          <input type="text" id="textInput" placeholder="Or type your response here…" autocomplete="off"
+                 oninput="handleLiveInput(this.value)"
+                 onkeydown="if(event.key==='Enter')submitText()" />
+          <button type="button" id="sendBtn" onclick="submitText()">Say It</button>
+        </div>
+        <div class="you-said" hidden>You said: <span id="transcriptLog">—</span></div>
+      </div>
+
       <!-- Target Grammar Mission HUD & Final Report Card -->
       <div class="card grammar-card" id="grammarCard">
         <div class="card-header" style="flex-wrap:wrap; gap:0.35rem;">
@@ -1336,18 +1348,6 @@
             <button type="button" onclick="restartStory()">🔄 Play Again</button>
           </div>
         </div>
-      </div>
-
-      <!-- Voice Dispatch & Text Input -->
-      <div class="card" id="inputCard">
-        <button type="button" id="micBtn" class="mic-btn" onclick="toggleMic()">🎤 Tap &amp; Speak</button>
-        <div class="input-row">
-          <input type="text" id="textInput" placeholder="Or type your response here…" autocomplete="off"
-                 oninput="handleLiveInput(this.value)"
-                 onkeydown="if(event.key==='Enter')submitText()" />
-          <button type="button" id="sendBtn" onclick="submitText()">Say It</button>
-        </div>
-        <div class="you-said" hidden>You said: <span id="transcriptLog">—</span></div>
       </div>
 
       <!-- AI Coach Feedback Card -->
