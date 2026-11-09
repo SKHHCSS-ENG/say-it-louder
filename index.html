@@ -141,6 +141,43 @@
       color: var(--navy);
       letter-spacing: -0.01em;
     }
+    .brand-logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .worker-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      cursor: pointer;
+      background-color: #eab308;
+      box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.25), 0 0 6px rgba(234, 179, 8, 0.7);
+      transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    }
+    .worker-dot:hover {
+      transform: scale(1.2);
+    }
+    .worker-dot.checking {
+      background-color: #eab308;
+      box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.28), 0 0 6px rgba(234, 179, 8, 0.75);
+      animation: workerDotPulse 1.2s infinite ease-in-out;
+    }
+    .worker-dot.online {
+      background-color: #22c55e;
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25), 0 0 6px rgba(34, 197, 94, 0.75);
+    }
+    .worker-dot.offline {
+      background-color: #ef4444;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25), 0 0 6px rgba(239, 68, 68, 0.75);
+    }
+    @keyframes workerDotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.9); }
+    }
 
     .brand-sub {
       font-size: 0.78rem;
@@ -1197,7 +1234,10 @@
 
   <header class="top-bar">
     <div class="brand">
-      <span class="brand-title">Say It Louder!</span>
+      <span class="brand-logo-wrap">
+        <span class="brand-title">Say It Louder!</span>
+        <span class="worker-dot checking" id="workerStatusDot" role="button" tabindex="0" title="AI Worker: Checking…" aria-label="AI Worker: Checking…" onclick="checkWorkerStatus()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();checkWorkerStatus();}"></span>
+      </span>
       <span class="brand-sub">ESL Speaking &amp; Story Studio</span>
     </div>
 
@@ -3242,6 +3282,62 @@ function activeWorkerUrl() {
   return typed || DEFAULT_WORKER_URL;
 }
 
+let workerCheckTimer = null;
+function setWorkerDotState(state, detail) {
+  const dot = document.getElementById("workerStatusDot");
+  if (!dot) return;
+  dot.className = "worker-dot " + state;
+  const label = state === "online"
+    ? "AI Worker: Connected & working" + (detail ? " (" + detail + ")" : "") + " — Click to re-check"
+    : state === "checking"
+      ? "AI Worker: Checking connection…"
+      : "AI Worker: Not connected / not working" + (detail ? " (" + detail + ")" : "") + " — Click to re-check";
+  dot.title = label;
+  dot.setAttribute("aria-label", label);
+}
+
+async function checkWorkerStatus() {
+  const url = activeWorkerUrl();
+  if (!url) {
+    setWorkerDotState("offline", "No URL");
+    return false;
+  }
+  setWorkerDotState("checking");
+  const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), 6000) : null;
+  try {
+    let res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "ping" }),
+      signal: ctrl ? ctrl.signal : undefined
+    });
+    const ct = (res.headers.get("content-type") || "").toLowerCase();
+    if (res.ok || (res.status === 400 && ct.includes("application/json"))) {
+      setWorkerDotState("online");
+      return true;
+    }
+    if (res.status === 405) {
+      res = await fetch(url, {
+        method: "GET",
+        cache: "no-store",
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (res.ok) {
+        setWorkerDotState("online");
+        return true;
+      }
+    }
+    setWorkerDotState("offline", "HTTP " + res.status);
+    return false;
+  } catch (_) {
+    setWorkerDotState("offline");
+    return false;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 let toastTimer = null;
 function showToast(msg) {
   const el = document.getElementById("appToast");
@@ -3299,6 +3395,7 @@ function loadSettings() {
   } catch (_) {}
   updateRouterStatusBadge();
   updateActiveVoiceBadge();
+  checkWorkerStatus();
 }
 
 function saveTeacherSettings() {
@@ -3318,6 +3415,8 @@ function saveTeacherSettings() {
   } catch (_) {}
   updateRouterStatusBadge();
   updateActiveVoiceBadge();
+  if (workerCheckTimer) clearTimeout(workerCheckTimer);
+  workerCheckTimer = setTimeout(() => { checkWorkerStatus(); }, 450);
 }
 
 function updateRouterStatusBadge() {
@@ -5831,13 +5930,17 @@ async function evaluateStudentSpeech(transcript) {
           })
         });
         if (res.ok) {
+          setWorkerDotState("online");
           const out = await res.json();
           if (out && out.chosen_target_node) {
             applyEvaluationResult(node, out, cleanText);
             return;
           }
+        } else {
+          setWorkerDotState("offline", "HTTP " + res.status);
         }
       } catch (_) {
+        setWorkerDotState("offline");
         // Fall through to Tier 2 or Tier 3 seamlessly
       }
     }
