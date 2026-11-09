@@ -1443,8 +1443,8 @@
           <div class="teacher-field">
             <label for="srLangSelect">Speech Recognition Accent</label>
             <select id="srLangSelect" onchange="changeSpeechLang()">
-              <option value="en-GB" selected>English (UK - en-GB)</option>
-              <option value="en-HK">English (Hong Kong - en-HK)</option>
+              <option value="en-HK" selected>English (Hong Kong - en-HK)</option>
+              <option value="en-GB">English (UK - en-GB)</option>
               <option value="en-US">English (US - en-US)</option>
             </select>
           </div>
@@ -3370,7 +3370,7 @@ function loadSettings() {
     if (savedLang) {
       document.getElementById("srLangSelect").value = savedLang;
     } else {
-      document.getElementById("srLangSelect").value = "en-GB";
+      document.getElementById("srLangSelect").value = "en-HK";
     }
 
     const savedVoiceEngine = localStorage.getItem(LS_KEYS.VOICE_ENGINE);
@@ -6078,7 +6078,7 @@ function setupVoiceRecognition() {
     return;
   }
   recognition = new SpeechRec();
-  recognition.lang = document.getElementById("srLangSelect")?.value || "en-GB";
+  recognition.lang = document.getElementById("srLangSelect")?.value || "en-HK";
   // Continuous manual-toggle mode so student pauses/hesitations never cut off or auto-submit
   recognition.continuous = true;
   recognition.interimResults = true;
