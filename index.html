@@ -877,7 +877,8 @@
 
     /* Voice & Input Card
        Idle Tap & Speak and Say It use the Eng subject-site .api-mesh wash
-       (ASK / EXPLAIN / SEND): blue → violet → magenta → orange → yellow.
+       shape (ASK / EXPLAIN / SEND), retinted to the agreed deep teal:
+       #1a6f8c → #0e6b7a → #0c5a70 → #0a4f63 → #186887.
        Copied here so this page does not load ask.css. Labels stay as written. */
     .mic-btn {
       width: 100%;
@@ -891,13 +892,13 @@
       --api-mesh-ink: #f4f0e8;
       --api-mesh-fill: linear-gradient(
         122deg,
-        #1458d6 0%,
-        #3a3ad0 24%,
-        #c42670 50%,
-        #be3a16 76%,
-        #7c6906 100%
+        #1a6f8c 0%,
+        #0e6b7a 24%,
+        #0c5a70 50%,
+        #0a4f63 76%,
+        #186887 100%
       );
-      background-color: #1458d6;
+      background-color: #0c5a70;
       background-image: var(--api-mesh-fill);
       background-repeat: no-repeat;
       background-size: 300% 300%;
@@ -911,7 +912,7 @@
 
     #micBtn:hover:not(:disabled):not(.listening),
     #sendBtn:hover:not(:disabled) {
-      background-color: #1458d6;
+      background-color: #0c5a70;
       border-color: transparent;
       color: #f4f0e8;
       filter: brightness(1.06);
@@ -927,7 +928,7 @@
        fade plus a cream ring and mesh-coloured glow mark listening.
        Say It stays mesh. Reduced motion keeps the mesh and drops the pulse. */
     #micBtn.listening {
-      background-color: #1458d6;
+      background-color: #0c5a70;
       background-image: var(--api-mesh-fill);
       border-color: transparent;
       color: var(--api-mesh-ink);
@@ -938,16 +939,16 @@
 
     @keyframes mic-listen-pulse {
       0%, 100% {
-        box-shadow: 0 3px 10px rgba(20, 88, 214, 0.22);
+        box-shadow: 0 3px 10px rgba(24, 104, 135, 0.22);
         filter: brightness(0.94);
       }
       50% {
         box-shadow:
           0 0 0 7px rgba(244, 240, 232, 0.46),
-          0 0 16px 3px rgba(196, 38, 112, 0.5),
-          0 0 26px 8px rgba(58, 58, 208, 0.42),
-          0 0 34px 10px rgba(190, 58, 22, 0.34),
-          0 3px 12px rgba(20, 88, 214, 0.28);
+          0 0 16px 3px rgba(14, 107, 122, 0.5),
+          0 0 26px 8px rgba(12, 90, 112, 0.42),
+          0 0 34px 10px rgba(10, 79, 99, 0.34),
+          0 3px 12px rgba(24, 104, 135, 0.28);
         filter: brightness(1.12);
       }
     }
@@ -964,13 +965,13 @@
         animation: none;
         transition: none;
         filter: none;
-        background-color: #1458d6;
+        background-color: #0c5a70;
         background-image: var(--api-mesh-fill);
         background-size: 100% 100%;
         background-position: 50% 50%;
         border-color: transparent;
         color: var(--api-mesh-ink);
-        box-shadow: 0 3px 10px rgba(20, 88, 214, 0.22);
+        box-shadow: 0 3px 10px rgba(24, 104, 135, 0.22);
       }
     }
 
