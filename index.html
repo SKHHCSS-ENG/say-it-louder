@@ -200,12 +200,6 @@
       50% { opacity: 0.55; transform: scale(0.9); }
     }
 
-    .brand-sub {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--accent-deep);
-    }
-
     #episodeSelect {
       font-weight: 600;
       color: var(--navy);
@@ -1379,7 +1373,6 @@
         <span class="brand-title">Say It Louder!</span>
         <span class="worker-dot checking" id="workerStatusDot" role="button" tabindex="0" title="AI Worker: Checking…" aria-label="AI Worker: Checking…" onclick="checkWorkerStatus()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();checkWorkerStatus();}"></span>
       </span>
-      <span class="brand-sub">ESL Speaking &amp; Story Studio</span>
     </div>
 
     <select id="episodeSelect" aria-label="Select Episode" onchange="changeEpisode()"></select>
