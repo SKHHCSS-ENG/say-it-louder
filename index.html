@@ -418,36 +418,42 @@
     .pace-meter {
       --pace-pct: 50%;
       display: inline-flex;
-      flex-direction: column;
-      justify-content: center;
-      width: 154px;
-      background: var(--accent-soft);
+      flex-direction: row;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--card);
       border: 1px solid var(--border-strong);
-      border-radius: 10px;
-      padding: 7px 10px 4px;
+      border-radius: 6px;
+      padding: 0.22rem 0.55rem;
       user-select: none;
       position: relative;
-      box-shadow: inset 0 1px 2px rgba(18, 58, 77, 0.04);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .pace-meter:hover {
+      border-color: var(--accent);
     }
 
     .pace-slider-track-wrap {
       position: relative;
-      height: 18px;
+      width: 92px;
+      height: 16px;
       display: flex;
       align-items: center;
-      margin: 0 14px;
+      margin: 0 17px;
+      flex-shrink: 0;
     }
 
     .pace-slider-track {
       width: 100%;
-      height: 5px;
+      height: 4px;
       border-radius: 999px;
       background: linear-gradient(
         90deg,
         var(--accent-deep) 0%,
         var(--accent-deep) var(--pace-pct, 50%),
-        #c5e2ec var(--pace-pct, 50%),
-        #c5e2ec 100%
+        #d3e8ef var(--pace-pct, 50%),
+        #d3e8ef 100%
       );
       position: relative;
     }
@@ -457,16 +463,16 @@
       top: 50%;
       left: var(--pace-pct, 50%);
       transform: translate(-50%, -50%);
-      background: #ffffff;
-      color: var(--accent-ink);
+      background: var(--card);
+      color: var(--navy);
       border: 1.5px solid var(--accent-deep);
-      border-radius: 6px;
-      padding: 1px 6px;
+      border-radius: 5px;
+      padding: 0.05rem 0.34rem;
       font-size: 0.7rem;
       font-weight: 800;
-      line-height: 1.25;
+      line-height: 1.2;
       white-space: nowrap;
-      box-shadow: 0 2px 6px rgba(18, 58, 77, 0.16);
+      box-shadow: 0 1px 4px rgba(18, 58, 77, 0.14);
       pointer-events: none;
       z-index: 2;
       transition: left 0.08s ease, transform 0.12s ease, border-color 0.12s ease;
@@ -474,15 +480,15 @@
 
     .pace-meter:hover .pace-slider-thumb,
     .pace-range-input:focus-visible ~ .pace-slider-thumb {
-      border-color: var(--navy);
-      color: var(--navy);
-      transform: translate(-50%, -50%) scale(1.04);
+      border-color: var(--accent-ink);
+      color: var(--accent-ink);
+      transform: translate(-50%, -50%) scale(1.03);
     }
 
     .pace-range-input {
       position: absolute;
-      inset: -4px -14px;
-      width: calc(100% + 28px);
+      inset: -4px -17px;
+      width: calc(100% + 34px);
       height: calc(100% + 8px);
       margin: 0;
       padding: 0;
@@ -493,45 +499,35 @@
       background: transparent;
     }
 
-    .pace-slider-bounds {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 2px;
-      padding: 0 1px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      color: var(--accent-ink);
-      line-height: 1;
-      letter-spacing: 0.01em;
-    }
-
     .pace-bound-lbl {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      line-height: 1;
+      white-space: nowrap;
       cursor: pointer;
-      opacity: 0.88;
-      transition: opacity 0.12s ease, color 0.12s ease;
+      transition: color 0.12s ease;
     }
 
     .pace-bound-lbl:hover {
-      opacity: 1;
       color: var(--navy);
-      text-decoration: underline;
     }
 
     @media (max-width: 520px) {
       .pace-meter {
-        width: 132px;
-        padding: 6px 8px 3px;
+        padding: 0.2rem 0.42rem;
+        gap: 0.25rem;
       }
       .pace-slider-track-wrap {
-        margin: 0 12px;
+        width: 68px;
+        margin: 0 15px;
       }
       .pace-slider-thumb {
         font-size: 0.66rem;
-        padding: 1px 5px;
+        padding: 0.04rem 0.28rem;
       }
-      .pace-slider-bounds {
-        font-size: 0.6rem;
+      .pace-bound-lbl {
+        font-size: 0.66rem;
       }
     }
 
@@ -1393,15 +1389,13 @@
           <span class="vn-speaker" id="speakerName">Ken (Customer)</span>
           <div class="vn-stage-controls" onclick="event.stopPropagation()">
             <div class="pace-meter" id="speechPaceMeter" role="group" aria-label="Adjust speech pace (80% to 120%)" title="Drag or tap to adjust speech pace (80% – 120%)">
+              <span class="pace-bound-lbl" onclick="setSpeechPace(0.8, true)" title="Set speech pace to 80%">80%</span>
               <div class="pace-slider-track-wrap">
                 <div class="pace-slider-track"></div>
                 <input type="range" id="speechPaceRange" class="pace-range-input" min="0.8" max="1.2" step="0.1" value="1" aria-label="Speech pace percentage" oninput="setSpeechPace(this.value, false)" onchange="setSpeechPace(this.value, true)" />
                 <div class="pace-slider-thumb" id="speechPaceThumb">100%</div>
               </div>
-              <div class="pace-slider-bounds">
-                <span class="pace-bound-lbl" onclick="setSpeechPace(0.8, true)" title="Set speech pace to 80%">80%</span>
-                <span class="pace-bound-lbl" onclick="setSpeechPace(1.2, true)" title="Set speech pace to 120%">120%</span>
-              </div>
+              <span class="pace-bound-lbl" onclick="setSpeechPace(1.2, true)" title="Set speech pace to 120%">120%</span>
             </div>
             <button type="button" class="ghost mini-btn" id="replayVoiceBtn" onclick="replayCharacterVoice()">🔊 Replay Line</button>
             <button type="button" class="mini-btn" id="playAgainStageBtn" onclick="restartStory()" hidden>🔄 Play Again</button>
