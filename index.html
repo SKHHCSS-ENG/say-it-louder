@@ -416,59 +416,122 @@
     }
 
     .pace-meter {
+      --pace-pct: 50%;
       display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      background: var(--panel-alt);
-      border: 1px solid var(--border-strong);
-      border-radius: 8px;
-      padding: 2px;
-    }
-
-    .pace-meter-label {
-      font-size: 0.68rem;
-      font-weight: 800;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      padding: 0 0.32rem 0 0.42rem;
-      user-select: none;
-      white-space: nowrap;
-    }
-
-    button.pace-btn {
-      background: transparent;
-      color: var(--navy);
-      border: 1px solid transparent;
-      border-radius: 6px;
-      padding: 0.16rem 0.4rem;
-      font-size: 0.72rem;
-      font-weight: 800;
-      line-height: 1.2;
-      min-width: 0;
-    }
-
-    button.pace-btn:hover:not(:disabled) {
+      flex-direction: column;
+      justify-content: center;
+      width: 154px;
       background: var(--accent-soft);
-      border-color: var(--border-strong);
-      color: var(--accent-ink);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 7px 10px 4px;
+      user-select: none;
+      position: relative;
+      box-shadow: inset 0 1px 2px rgba(18, 58, 77, 0.04);
     }
 
-    button.pace-btn.active,
-    button.pace-btn.active:hover:not(:disabled) {
-      background: var(--accent-deep);
-      border-color: var(--accent-deep);
-      color: #ffffff;
-      box-shadow: 0 1px 4px rgba(12, 90, 112, 0.22);
+    .pace-slider-track-wrap {
+      position: relative;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      margin: 0 14px;
+    }
+
+    .pace-slider-track {
+      width: 100%;
+      height: 5px;
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        var(--accent-deep) 0%,
+        var(--accent-deep) var(--pace-pct, 50%),
+        #c5e2ec var(--pace-pct, 50%),
+        #c5e2ec 100%
+      );
+      position: relative;
+    }
+
+    .pace-slider-thumb {
+      position: absolute;
+      top: 50%;
+      left: var(--pace-pct, 50%);
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      color: var(--accent-ink);
+      border: 1.5px solid var(--accent-deep);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      line-height: 1.25;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(18, 58, 77, 0.16);
+      pointer-events: none;
+      z-index: 2;
+      transition: left 0.08s ease, transform 0.12s ease, border-color 0.12s ease;
+    }
+
+    .pace-meter:hover .pace-slider-thumb,
+    .pace-range-input:focus-visible ~ .pace-slider-thumb {
+      border-color: var(--navy);
+      color: var(--navy);
+      transform: translate(-50%, -50%) scale(1.04);
+    }
+
+    .pace-range-input {
+      position: absolute;
+      inset: -4px -14px;
+      width: calc(100% + 28px);
+      height: calc(100% + 8px);
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 3;
+      border: none;
+      background: transparent;
+    }
+
+    .pace-slider-bounds {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2px;
+      padding: 0 1px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--accent-ink);
+      line-height: 1;
+      letter-spacing: 0.01em;
+    }
+
+    .pace-bound-lbl {
+      cursor: pointer;
+      opacity: 0.88;
+      transition: opacity 0.12s ease, color 0.12s ease;
+    }
+
+    .pace-bound-lbl:hover {
+      opacity: 1;
+      color: var(--navy);
+      text-decoration: underline;
     }
 
     @media (max-width: 520px) {
-      .pace-meter-label {
-        display: none;
+      .pace-meter {
+        width: 132px;
+        padding: 6px 8px 3px;
       }
-      button.pace-btn {
-        padding: 0.16rem 0.34rem;
-        font-size: 0.7rem;
+      .pace-slider-track-wrap {
+        margin: 0 12px;
+      }
+      .pace-slider-thumb {
+        font-size: 0.66rem;
+        padding: 1px 5px;
+      }
+      .pace-slider-bounds {
+        font-size: 0.6rem;
       }
     }
 
@@ -1329,13 +1392,16 @@
         <div class="vn-textbox-header">
           <span class="vn-speaker" id="speakerName">Ken (Customer)</span>
           <div class="vn-stage-controls" onclick="event.stopPropagation()">
-            <div class="pace-meter" id="speechPaceMeter" role="group" aria-label="Adjust speech pace">
-              <span class="pace-meter-label">Pace</span>
-              <button type="button" class="pace-btn" data-pace="0.8" aria-pressed="false" onclick="setSpeechPace(0.8)" title="Speech pace: 80% (Slower)">80%</button>
-              <button type="button" class="pace-btn" data-pace="0.9" aria-pressed="false" onclick="setSpeechPace(0.9)" title="Speech pace: 90% (Slightly slower)">90%</button>
-              <button type="button" class="pace-btn active" data-pace="1" aria-pressed="true" onclick="setSpeechPace(1)" title="Speech pace: 100% (Normal)">100%</button>
-              <button type="button" class="pace-btn" data-pace="1.1" aria-pressed="false" onclick="setSpeechPace(1.1)" title="Speech pace: 110% (Slightly faster)">110%</button>
-              <button type="button" class="pace-btn" data-pace="1.2" aria-pressed="false" onclick="setSpeechPace(1.2)" title="Speech pace: 120% (Faster)">120%</button>
+            <div class="pace-meter" id="speechPaceMeter" role="group" aria-label="Adjust speech pace (80% to 120%)" title="Drag or tap to adjust speech pace (80% – 120%)">
+              <div class="pace-slider-track-wrap">
+                <div class="pace-slider-track"></div>
+                <input type="range" id="speechPaceRange" class="pace-range-input" min="0.8" max="1.2" step="0.1" value="1" aria-label="Speech pace percentage" oninput="setSpeechPace(this.value, false)" onchange="setSpeechPace(this.value, true)" />
+                <div class="pace-slider-thumb" id="speechPaceThumb">100%</div>
+              </div>
+              <div class="pace-slider-bounds">
+                <span class="pace-bound-lbl" onclick="setSpeechPace(0.8, true)" title="Set speech pace to 80%">80%</span>
+                <span class="pace-bound-lbl" onclick="setSpeechPace(1.2, true)" title="Set speech pace to 120%">120%</span>
+              </div>
             </div>
             <button type="button" class="ghost mini-btn" id="replayVoiceBtn" onclick="replayCharacterVoice()">🔊 Replay Line</button>
             <button type="button" class="mini-btn" id="playAgainStageBtn" onclick="restartStory()" hidden>🔄 Play Again</button>
@@ -3870,16 +3936,24 @@ function createPacedAudio(srcUrl) {
 }
 
 function updateSpeechPaceUI() {
-  const btns = document.querySelectorAll("#speechPaceMeter .pace-btn");
-  btns.forEach((btn) => {
-    const btnPace = normalizeSpeechPace(btn.getAttribute("data-pace"));
-    const isActive = Math.abs(btnPace - speechPace) < 0.001;
-    btn.classList.toggle("active", isActive);
-    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-  });
+  const pct = Math.round(speechPace * 100);
+  const ratio = Math.max(0, Math.min(100, ((speechPace - 0.8) / 0.4) * 100));
+  const meter = document.getElementById("speechPaceMeter");
+  if (meter) {
+    meter.style.setProperty("--pace-pct", `${ratio.toFixed(1)}%`);
+  }
+  const rangeInput = document.getElementById("speechPaceRange");
+  if (rangeInput && Math.abs(Number(rangeInput.value) - speechPace) > 0.001) {
+    rangeInput.value = String(speechPace);
+  }
+  const thumb = document.getElementById("speechPaceThumb");
+  if (thumb) {
+    thumb.textContent = `${pct}%`;
+  }
 }
 
-function setSpeechPace(val) {
+function setSpeechPace(val, showFeedbackToast = true) {
+  const prevPace = speechPace;
   speechPace = normalizeSpeechPace(val);
   try {
     localStorage.setItem(LS_KEYS.SPEECH_PACE, String(speechPace));
@@ -3889,10 +3963,12 @@ function setSpeechPace(val) {
   const pct = Math.round(speechPace * 100);
   if (currentTtsAudio && !currentTtsAudio.paused && !currentTtsAudio.ended) {
     applyPaceToAudioElement(currentTtsAudio);
-  } else if (window.speechSynthesis && window.speechSynthesis.speaking && lastBrowserSpeechArgs) {
+  } else if (showFeedbackToast && Math.abs(prevPace - speechPace) > 0.001 && window.speechSynthesis && window.speechSynthesis.speaking && lastBrowserSpeechArgs) {
     speakViaBrowserSynthesis(lastBrowserSpeechArgs.cleanText, lastBrowserSpeechArgs.profile);
   }
-  showToast(`Speech pace: ${pct}%`);
+  if (showFeedbackToast) {
+    showToast(`Speech pace: ${pct}%`);
+  }
 }
 
 async function tryPlayCloudNeuralTts(cleanText, profile) {
