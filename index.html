@@ -128,6 +128,27 @@
       z-index: 20;
     }
 
+    .back-pill {
+      background: var(--accent-soft);
+      color: var(--accent-ink);
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s ease;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .back-pill:hover {
+      background: #d5eff7;
+    }
+
     .brand {
       display: flex;
       align-items: baseline;
@@ -1352,6 +1373,7 @@
 <body>
 
   <header class="top-bar">
+    <a class="back-pill" href="https://learning.hcs.edu.hk/english/" aria-label="Back to the English site">←</a>
     <div class="brand">
       <span class="brand-logo-wrap">
         <span class="brand-title">Say It Louder!</span>
