@@ -411,7 +411,65 @@
     .vn-stage-controls {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .pace-meter {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--panel-alt);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 2px;
+    }
+
+    .pace-meter-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 0 0.32rem 0 0.42rem;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    button.pace-btn {
+      background: transparent;
+      color: var(--navy);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.16rem 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.2;
+      min-width: 0;
+    }
+
+    button.pace-btn:hover:not(:disabled) {
+      background: var(--accent-soft);
+      border-color: var(--border-strong);
+      color: var(--accent-ink);
+    }
+
+    button.pace-btn.active,
+    button.pace-btn.active:hover:not(:disabled) {
+      background: var(--accent-deep);
+      border-color: var(--accent-deep);
+      color: #ffffff;
+      box-shadow: 0 1px 4px rgba(12, 90, 112, 0.22);
+    }
+
+    @media (max-width: 520px) {
+      .pace-meter-label {
+        display: none;
+      }
+      button.pace-btn {
+        padding: 0.16rem 0.34rem;
+        font-size: 0.7rem;
+      }
     }
 
     .mini-btn {
@@ -1271,6 +1329,14 @@
         <div class="vn-textbox-header">
           <span class="vn-speaker" id="speakerName">Ken (Customer)</span>
           <div class="vn-stage-controls" onclick="event.stopPropagation()">
+            <div class="pace-meter" id="speechPaceMeter" role="group" aria-label="Adjust speech pace">
+              <span class="pace-meter-label">Pace</span>
+              <button type="button" class="pace-btn" data-pace="0.8" aria-pressed="false" onclick="setSpeechPace(0.8)" title="Speech pace: 80% (Slower)">80%</button>
+              <button type="button" class="pace-btn" data-pace="0.9" aria-pressed="false" onclick="setSpeechPace(0.9)" title="Speech pace: 90% (Slightly slower)">90%</button>
+              <button type="button" class="pace-btn active" data-pace="1" aria-pressed="true" onclick="setSpeechPace(1)" title="Speech pace: 100% (Normal)">100%</button>
+              <button type="button" class="pace-btn" data-pace="1.1" aria-pressed="false" onclick="setSpeechPace(1.1)" title="Speech pace: 110% (Slightly faster)">110%</button>
+              <button type="button" class="pace-btn" data-pace="1.2" aria-pressed="false" onclick="setSpeechPace(1.2)" title="Speech pace: 120% (Faster)">120%</button>
+            </div>
             <button type="button" class="ghost mini-btn" id="replayVoiceBtn" onclick="replayCharacterVoice()">🔊 Replay Line</button>
             <button type="button" class="mini-btn" id="playAgainStageBtn" onclick="restartStory()" hidden>🔄 Play Again</button>
           </div>
@@ -1482,10 +1548,14 @@ const LS_KEYS = {
   AUTO_COACH_TTS: "sayitlouder.autoCoachTts",
   EPISODE: "sayitlouder.lastEpisode",
   MUTED: "sayitlouder.muted",
+  SPEECH_PACE: "sayitlouder.speechPace",
   SR_LANG: "sayitlouder.srLang",
   ENDINGS_PREFIX: "sayitlouder.endings."
 };
 
+const VALID_SPEECH_PACES = [0.8, 0.9, 1, 1.1, 1.2];
+let speechPace = 1;
+let lastBrowserSpeechArgs = null;
 let currentEpisodeKey = "ep1_boba";
 let currentEpisode = null;
 let currentNodeKey = "node_start";
@@ -3368,6 +3438,12 @@ function loadSettings() {
     isMuted = savedMuted === "1";
     updateMuteButtonUI();
 
+    const savedPace = localStorage.getItem(LS_KEYS.SPEECH_PACE);
+    if (savedPace !== null) {
+      speechPace = normalizeSpeechPace(savedPace);
+    }
+    updateSpeechPaceUI();
+
     const savedLang = localStorage.getItem(LS_KEYS.SR_LANG);
     if (savedLang) {
       document.getElementById("srLangSelect").value = savedLang;
@@ -3764,11 +3840,66 @@ function buildClientAzureSsml(text, profile) {
   return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-GB"><voice name="${profile.edgeVoice}">${body}</voice></speak>`;
 }
 
+function normalizeSpeechPace(val) {
+  const num = Math.round(Number(val) * 10) / 10;
+  return VALID_SPEECH_PACES.includes(num) ? num : 1;
+}
+
+function getEffectiveBrowserRate(baseRate = 1.0) {
+  const raw = (Number(baseRate) || 1.0) * speechPace;
+  return Math.max(0.5, Math.min(2.0, Math.round(raw * 100) / 100));
+}
+
+function applyPaceToAudioElement(audio) {
+  if (!audio) return;
+  try {
+    if ("preservesPitch" in audio) audio.preservesPitch = true;
+    if ("mozPreservesPitch" in audio) audio.mozPreservesPitch = true;
+    if ("webkitPreservesPitch" in audio) audio.webkitPreservesPitch = true;
+    audio.defaultPlaybackRate = speechPace;
+    audio.playbackRate = speechPace;
+  } catch (_) {}
+}
+
+function createPacedAudio(srcUrl) {
+  const audio = new Audio(srcUrl);
+  applyPaceToAudioElement(audio);
+  audio.addEventListener("loadedmetadata", () => applyPaceToAudioElement(audio), { once: true });
+  audio.addEventListener("play", () => applyPaceToAudioElement(audio));
+  return audio;
+}
+
+function updateSpeechPaceUI() {
+  const btns = document.querySelectorAll("#speechPaceMeter .pace-btn");
+  btns.forEach((btn) => {
+    const btnPace = normalizeSpeechPace(btn.getAttribute("data-pace"));
+    const isActive = Math.abs(btnPace - speechPace) < 0.001;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+}
+
+function setSpeechPace(val) {
+  speechPace = normalizeSpeechPace(val);
+  try {
+    localStorage.setItem(LS_KEYS.SPEECH_PACE, String(speechPace));
+  } catch (_) {}
+  updateSpeechPaceUI();
+
+  const pct = Math.round(speechPace * 100);
+  if (currentTtsAudio && !currentTtsAudio.paused && !currentTtsAudio.ended) {
+    applyPaceToAudioElement(currentTtsAudio);
+  } else if (window.speechSynthesis && window.speechSynthesis.speaking && lastBrowserSpeechArgs) {
+    speakViaBrowserSynthesis(lastBrowserSpeechArgs.cleanText, lastBrowserSpeechArgs.profile);
+  }
+  showToast(`Speech pace: ${pct}%`);
+}
+
 async function tryPlayCloudNeuralTts(cleanText, profile) {
   const cacheKey = `${profile.edgeVoice}|${profile.style}|${cleanText}`;
   if (ttsAudioCache.has(cacheKey)) {
     const cachedUrl = ttsAudioCache.get(cacheKey);
-    const audio = new Audio(cachedUrl);
+    const audio = createPacedAudio(cachedUrl);
     currentTtsAudio = audio;
     await audio.play();
     return true;
@@ -3794,7 +3925,7 @@ async function tryPlayCloudNeuralTts(cleanText, profile) {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         ttsAudioCache.set(cacheKey, url);
-        const audio = new Audio(url);
+        const audio = createPacedAudio(url);
         currentTtsAudio = audio;
         await audio.play();
         return true;
@@ -3822,7 +3953,7 @@ async function tryPlayCloudNeuralTts(cleanText, profile) {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         ttsAudioCache.set(cacheKey, url);
-        const audio = new Audio(url);
+        const audio = createPacedAudio(url);
         currentTtsAudio = audio;
         await audio.play();
         return true;
@@ -3835,10 +3966,12 @@ async function tryPlayCloudNeuralTts(cleanText, profile) {
 function speakViaBrowserSynthesis(cleanText, profile) {
   if (!window.speechSynthesis) return;
   try {
+    lastBrowserSpeechArgs = { cleanText, profile };
     window.speechSynthesis.cancel();
     const { voice } = pickBestNaturalVoice(profile.gender);
     // Split long AI responses into natural sentence chunks so Chrome never cuts off mid-paragraph
     const chunks = cleanText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [cleanText];
+    const effectiveRate = getEffectiveBrowserRate(profile.rate);
     chunks.forEach((chunk) => {
       const trimmed = chunk.trim();
       if (!trimmed) return;
@@ -3848,7 +3981,7 @@ function speakViaBrowserSynthesis(cleanText, profile) {
         u.voice = voice;
         u.lang = voice.lang || "en-GB";
       }
-      u.rate = profile.rate;
+      u.rate = effectiveRate;
       u.pitch = profile.pitch;
       window.speechSynthesis.speak(u);
     });
@@ -3863,6 +3996,7 @@ async function speakCharacterLine(text, overrideRole = null) {
   const clean = cleanSpeechText(text);
   if (!clean) return;
 
+  lastBrowserSpeechArgs = null;
   if (currentTtsAudio) {
     try { currentTtsAudio.pause(); } catch (_) {}
     currentTtsAudio = null;
